@@ -148,7 +148,9 @@ void LveDevice::createLogicalDevice() {
   }
 
   VkPhysicalDeviceFeatures deviceFeatures = {};
-  deviceFeatures.samplerAnisotropy = VK_TRUE;
+  // vGPU?
+  deviceFeatures.samplerAnisotropy = VK_FALSE;
+  // deviceFeatures.samplerAnisotropy = VK_TRUE;
 
   VkDeviceCreateInfo createInfo = {};
   createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -214,9 +216,12 @@ bool LveDevice::isDeviceSuitable(VkPhysicalDevice device) {
 
   VkPhysicalDeviceFeatures supportedFeatures;
   vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
+  std::cout << indices.isComplete() << extensionsSupported << swapChainAdequate << supportedFeatures.samplerAnisotropy << std::endl;
 
-  return indices.isComplete() && extensionsSupported && swapChainAdequate &&
-         supportedFeatures.samplerAnisotropy;
+  // vGPU?
+  // return indices.isComplete() && extensionsSupported && swapChainAdequate &&
+  //        supportedFeatures.samplerAnisotropy;
+  return indices.isComplete() && extensionsSupported && swapChainAdequate;
 }
 
 void LveDevice::populateDebugMessengerCreateInfo(
