@@ -104,14 +104,8 @@ void FirstApp::createPipeline() {
   pipelineConfig.pipelineLayout = pipelineLayout;
   lvePipeline =
       std::make_unique<LvePipeline>(lveDevice,
-                                    "C:"
-                                    "\\Users\\rlckd\\source\\repos\\VulkanTes"
-                                    "t\\VulkanTest\\shaders\\\simple_"
-                                    "shader.vert.spv",
-                                    "C:"
-                                    "\\Users\\rlckd\\source\\repos\\VulkanTes"
-                                    "t\\VulkanTest\\shaders\\\simple_"
-                                    "shader.frag.spv",
+                                    "./shaders/simple_shader.vert.spv",
+                                    "./shaders/simple_shader.frag.spv",
                                     pipelineConfig);
 }
 

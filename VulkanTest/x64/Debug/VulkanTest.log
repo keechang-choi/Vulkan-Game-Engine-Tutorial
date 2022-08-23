@@ -1,5 +1,0 @@
-﻿  계속하려면 아무 키나 누르십시오 . . . 
-  first_app.cpp
-C:\Users\rlckd\source\repos\VulkanTest\VulkanTest\first_app.cpp(109,37): warning C4129: 's': 문자 이스케이프 시퀀스를 인식할 수 없습니다.
-C:\Users\rlckd\source\repos\VulkanTest\VulkanTest\first_app.cpp(113,37): warning C4129: 's': 문자 이스케이프 시퀀스를 인식할 수 없습니다.
-  VulkanTest.vcxproj -> C:\Users\rlckd\source\repos\VulkanTest\x64\Debug\VulkanTest.exe
