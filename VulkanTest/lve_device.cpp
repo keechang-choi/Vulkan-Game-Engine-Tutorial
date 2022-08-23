@@ -216,12 +216,16 @@ bool LveDevice::isDeviceSuitable(VkPhysicalDevice device) {
 
   VkPhysicalDeviceFeatures supportedFeatures;
   vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
-  std::cout << indices.isComplete() << extensionsSupported << swapChainAdequate << supportedFeatures.samplerAnisotropy << std::endl;
+  std::cout << indices.isComplete() << extensionsSupported << swapChainAdequate
+            << supportedFeatures.samplerAnisotropy << std::endl;
 
-  // vGPU?
-  // return indices.isComplete() && extensionsSupported && swapChainAdequate &&
-  //        supportedFeatures.samplerAnisotropy;
+  // not sure, in WSL can not use samplerAnisotropy. may be relevant to vGPU?
+#ifdef _WIN32
+  return indices.isComplete() && extensionsSupported && swapChainAdequate &&
+         supportedFeatures.samplerAnisotropy;
+#else
   return indices.isComplete() && extensionsSupported && swapChainAdequate;
+#endif
 }
 
 void LveDevice::populateDebugMessengerCreateInfo(
