@@ -148,9 +148,13 @@ void LveDevice::createLogicalDevice() {
   }
 
   VkPhysicalDeviceFeatures deviceFeatures = {};
-  // vGPU?
+
+#ifdef _WIN32
+  deviceFeatures.samplerAnisotropy = VK_TRUE;
+#else
+  // wsl2, vGPU?
   deviceFeatures.samplerAnisotropy = VK_FALSE;
-  // deviceFeatures.samplerAnisotropy = VK_TRUE;
+#endif
 
   VkDeviceCreateInfo createInfo = {};
   createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
