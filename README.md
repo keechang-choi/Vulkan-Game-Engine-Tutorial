@@ -1,9 +1,11 @@
 # Vulkan-Game-Engine-Tutorial
 Youtube lecture practice
 
-all the materials from
-
-https://www.youtube.com/playlist?list=PL8327DO66nu9qYVKLDmdLW_84-yE4auCR
+all the base codes and materials from
+- lecture  
+  https://www.youtube.com/playlist?list=PL8327DO66nu9qYVKLDmdLW_84-yE4auCR
+- github repo  
+  https://github.com/blurrypiano/littleVulkanEngine
 
 ## Summary
 
