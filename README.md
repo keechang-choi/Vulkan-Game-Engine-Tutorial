@@ -29,4 +29,11 @@ all the base codes and materials from
     - shader alignment requirement
   - ![vulkan-tut-09-01](https://user-images.githubusercontent.com/49244613/186207249-9b349e49-7fea-40f7-91e8-e8aa5e98dc31.gif)
 
-- 
+- Lec10
+  - covered:
+    - transformation
+    - ECS(Entity Component System) (game objects)
+  - TODO
+    - https://austinmorlan.com/posts/entity_component_system/
+  - ![vulkan-tut-10-01](https://user-images.githubusercontent.com/49244613/186472676-8e0779d6-2d12-4e85-832b-3dccda674a01.gif)
+
