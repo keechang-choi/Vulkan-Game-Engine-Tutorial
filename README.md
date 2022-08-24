@@ -27,5 +27,10 @@ WSL2 + ubuntu setting with vGPU
     - swap chain recreation, dynamic viewport and scissors
   - ![vulkan-tut-08-01](https://user-images.githubusercontent.com/49244613/186187638-69e4ce50-3d9a-460d-852f-771461ee400d.gif)
 
-- 
+- Lec09
+  - covered:
+    - push constants
+    - shader alignment requirement
+  - ![vulkan-tut-09-01](https://user-images.githubusercontent.com/49244613/186207249-9b349e49-7fea-40f7-91e8-e8aa5e98dc31.gif)
+
 - 
