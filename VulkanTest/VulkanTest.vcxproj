@@ -166,7 +166,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="first_app.cpp" />
-    <ClCompile Include="kc_custom.cpp" />
+    <ClCompile Include="kc_bonus.cpp" />
     <ClCompile Include="lve_game_object.cpp" />
     <ClCompile Include="lve_model.cpp" />
     <ClCompile Include="lve_renderer.cpp" />
@@ -179,7 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="first_app.hpp" />
-    <ClInclude Include="kc_custom.hpp" />
+    <ClInclude Include="kc_bonus.hpp" />
     <ClInclude Include="lve_game_object.hpp" />
     <ClInclude Include="lve_model.hpp" />
     <ClInclude Include="lve_renderer.hpp" />

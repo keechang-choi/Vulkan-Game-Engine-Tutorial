@@ -45,7 +45,7 @@
     <ClCompile Include="simple_render_system.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="kc_custom.cpp">
+    <ClCompile Include="kc_bonus.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,7 +74,7 @@
     <ClInclude Include="lve_renderer.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="kc_custom.hpp">
+    <ClInclude Include="kc_bonus.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="simple_render_system.hpp">

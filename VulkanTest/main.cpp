@@ -10,7 +10,8 @@ int main(int argc, char *argv[]) {
 
   lve::FirstApp app{};
   try {
-    app.run();
+    // app.run();
+    app.runGravity();
   } catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;

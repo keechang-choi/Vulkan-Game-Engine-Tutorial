@@ -21,6 +21,7 @@ class FirstApp {
   FirstApp &operator=(const FirstApp &) = delete;
 
   void run();
+  void runGravity();
 
  private:
   void loadGameObjects();
