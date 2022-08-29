@@ -37,3 +37,10 @@ all the base codes and materials from
     - https://austinmorlan.com/posts/entity_component_system/
   - ![vulkan-tut-10-01](https://user-images.githubusercontent.com/49244613/186472676-8e0779d6-2d12-4e85-832b-3dccda674a01.gif)
 
+- Lec11 
+  - covered: 
+    - refactoring -> rederer/ render system
+    - reder pass compatibility
+    - break one-to-one correspondence between swap chain image and command buffer.
+  - bonus: gravity simulation
+  ![vulkan-tut-11-01](https://user-images.githubusercontent.com/49244613/187266544-9186d8c7-866a-4793-8ba9-f5320463d9ab.gif)
