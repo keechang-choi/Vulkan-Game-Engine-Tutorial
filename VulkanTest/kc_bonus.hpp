@@ -30,22 +30,13 @@ class GravityPhysicsSystem {
   void update(std::vector<lve::LveGameObject>& objs, float dt,
               unsigned int substeps = 1);
   // fromObj attract toObj
-  glm::vec2 computeForce(lve::LveGameObject& fromObj,
+  glm::vec3 computeForce(lve::LveGameObject& fromObj,
                          lve::LveGameObject& toObj) const;
 
  private:
   void stepSimulation(std::vector<lve::LveGameObject>& physicsObjs, float dt);
 };
 
-class Vec2FieldSystem {
- public:
-  void update(const GravityPhysicsSystem& physicsSystem,
-              std::vector<lve::LveGameObject>& physicsObjs,
-              std::vector<lve::LveGameObject>& vectorField);
-};
-
-std::unique_ptr<lve::LveModel> createSquareModel(lve::LveDevice& device,
-                                                 glm::vec2 offset);
 std::unique_ptr<lve::LveModel> createCircleModel(lve::LveDevice& device,
                                                  unsigned int numSides);
 
