@@ -86,11 +86,11 @@ all the base codes and materials from
 
     $$
     \begin{align}
-    S_{world_2}Z''(\gamma) P_2 Y'(\beta) P_1 X(\alpha) S_{world_0}^{-1} = X^{*}(\alpha) Y^{*}(\beta) Z^{*}(\gamma) \\   
+    S_{world_2}Z''(\gamma) P_2 Y'(\beta) P_1 X(\alpha) S_{world_0}^{-1} = X^{\*}(\alpha) Y^{\*}(\beta) Z^{\*}(\gamma) \\   
     where \\; S_{world_2} = (P_0 P_1 P_2)^{-1} \\; and \\; S_{world_0}^{-1} = P_0 \\   
-    X^*: A_{xyz} \rightarrow A_{xyz} \\  
-    Y^*: A_{xyz} \rightarrow A_{xyz} \\  
-    Z^*: A_{xyz} \rightarrow A_{xyz}  
+    X^{\*}: A_{xyz} \rightarrow A_{xyz} \\  
+    Y^{\*}: A_{xyz} \rightarrow A_{xyz} \\  
+    Z^{\*}: A_{xyz} \rightarrow A_{xyz}  
     \end{align}
     $$
 
@@ -98,9 +98,9 @@ all the base codes and materials from
 
     $$
     \begin{align}
-    Y^* = S_{world_1} Y' S_{world_1}^{-1} =  (P_1 P_0)^{-1} Y'(P_1 P_0) \\
-    Z^* = (P_2 P_1 P_0)^{-1} Z''(P_2 P_1 P_0) \\
-    \Rightarrow  X^{*}Y^{*}Z^{*} = S_{world_2} Z''P_2 Y' P_1 X P_0 = \\ 
+    Y^{\*} = S_{world_1} Y' S_{world_1}^{-1} =  (P_1 P_0)^{-1} Y'(P_1 P_0) \\
+    Z^{\*} = (P_2 P_1 P_0)^{-1} Z''(P_2 P_1 P_0) \\
+    \Rightarrow  X^{\*} Y^{\*} Z^{\*} = S_{world_2} Z''P_2 Y' P_1 X P_0 = \\ 
     P_0^{-1}(P_1^{-1} P_2^{-1} Z''P_2 Y' P_1 X )  P_0
     \end{align}
     $$
