@@ -1,6 +1,7 @@
 #include "first_app.hpp"
 
 #include "kc_bonus.hpp"
+#include "lve_camera.hpp"
 #include "simple_render_system.hpp"
 
 // libs
@@ -63,6 +64,8 @@ void FirstApp::runGravity() {
 
   SimpleRenderSystem simpleRenderSystem{lveDevice,
                                         lveRenderer.getSwapChainRenderPass()};
+  LveCamera camera{};
+  camera.setOrthographicProjection(-1, 1, -1, 1, -1, 1);
 
   while (!lveWindow.shouldClose()) {
     glfwPollEvents();
@@ -73,7 +76,8 @@ void FirstApp::runGravity() {
 
       // render system
       lveRenderer.beginSwapChainRenderPass(commandBuffer);
-      simpleRenderSystem.renderGameObjects(commandBuffer, physicsObjects);
+      simpleRenderSystem.renderGameObjects(commandBuffer, physicsObjects,
+                                           camera);
       lveRenderer.endSwapChainRenderPass(commandBuffer);
       lveRenderer.endFrame();
     }
@@ -85,13 +89,20 @@ void FirstApp::runGravity() {
 void FirstApp::run() {
   SimpleRenderSystem simpleRenderSystem{lveDevice,
                                         lveRenderer.getSwapChainRenderPass()};
+  LveCamera camera{};
+
   while (!lveWindow.shouldClose()) {
+    float aspect = lveRenderer.getAspectRatio();
+
+    // camera.setOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
+    camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 10.f);
+
     glfwPollEvents();
     if (auto commandBuffer = lveRenderer.beginFrame()) {
       // NOTE: separate frame and renderpass, since we need to control
       // multiple render passes.
       lveRenderer.beginSwapChainRenderPass(commandBuffer);
-      simpleRenderSystem.renderGameObjects(commandBuffer, gameObjects);
+      simpleRenderSystem.renderGameObjects(commandBuffer, gameObjects, camera);
       lveRenderer.endSwapChainRenderPass(commandBuffer);
       lveRenderer.endFrame();
     }
@@ -163,7 +174,7 @@ void FirstApp::loadGameObjects() {
       createCubeModel(lveDevice, {.0f, .0f, .0f});
   auto cube = LveGameObject::createGameObject();
   cube.model = lveModel;
-  cube.transform.translation = {.0f, .0f, .5f};
+  cube.transform.translation = {.0f, .0f, 2.5f};
   cube.transform.scale = {.5f, .5f, .5f};
   gameObjects.push_back(std::move(cube));
 }
