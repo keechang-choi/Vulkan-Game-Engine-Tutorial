@@ -64,12 +64,13 @@ void SimpleRenderSystem::createPipeline(VkRenderPass renderPass) {
 }
 
 void SimpleRenderSystem::renderGameObjects(
-    VkCommandBuffer commandBuffer, std::vector<LveGameObject>& gameObjects) {
+    VkCommandBuffer commandBuffer, std::vector<LveGameObject>& gameObjects,
+    const LveCamera& camera) {
   // update
   int i = 0;
   for (auto& obj : gameObjects) {
     i++;
-    float v = 0.0001f;
+    float v = 0.01f;
     obj.transform.rotation.y =
         glm::mod<float>(obj.transform.rotation.y + v * i, glm::two_pi<float>());
     obj.transform.rotation.x = glm::mod<float>(
@@ -80,7 +81,8 @@ void SimpleRenderSystem::renderGameObjects(
   for (auto& obj : gameObjects) {
     SimplePushConstantData push{};
     push.color = obj.color;
-    push.transform = obj.transform.mat4();
+    // temp mat mul woth cpu until we cover the uniform buffers
+    push.transform = camera.getProjection() * obj.transform.mat4();
 
     vkCmdPushConstants(
         commandBuffer, pipelineLayout,
