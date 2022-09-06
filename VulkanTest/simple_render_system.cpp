@@ -70,7 +70,7 @@ void SimpleRenderSystem::renderGameObjects(
   int i = 0;
   for (auto& obj : gameObjects) {
     i++;
-    float v = 0.01f;
+    float v = 0.0001f;
     obj.transform.rotation.y =
         glm::mod<float>(obj.transform.rotation.y + v * i, glm::two_pi<float>());
     obj.transform.rotation.x = glm::mod<float>(
@@ -78,11 +78,13 @@ void SimpleRenderSystem::renderGameObjects(
   }
   // render
   lvePipeline->bind(commandBuffer);
+
+  auto projectionMatrix = camera.getProjection() * camera.getView();
   for (auto& obj : gameObjects) {
     SimplePushConstantData push{};
     push.color = obj.color;
     // temp mat mul woth cpu until we cover the uniform buffers
-    push.transform = camera.getProjection() * obj.transform.mat4();
+    push.transform = projectionMatrix * obj.transform.mat4();
 
     vkCmdPushConstants(
         commandBuffer, pipelineLayout,
