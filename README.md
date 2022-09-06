@@ -114,3 +114,6 @@ all the base codes and materials from
       - perspective
     - homogeneous coordinates
   - ![tut13](https://user-images.githubusercontent.com/49244613/188308317-a99b93b8-22f4-46ee-ac90-4876177033e9.gif)
+- Lec14
+  - covered:
+  - a
