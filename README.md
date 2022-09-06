@@ -117,4 +117,4 @@ all the base codes and materials from
 - Lec14
   - covered:
     - cameara transformation
-    - Viewing transformation (model - camera - perspective - orthographic - viewport)  
+    - Viewing transformation  (model - camera - perspective - orthographic - viewport)  
