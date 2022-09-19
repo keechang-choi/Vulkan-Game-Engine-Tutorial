@@ -118,3 +118,7 @@ all the base codes and materials from
   - covered:
     - cameara transformation
     - Viewing transformation  (model - camera - perspective - orthographic - viewport)  
+- Lec15
+  - covered:
+    - game loop and time
+    - camera controller
