@@ -67,15 +67,17 @@ void SimpleRenderSystem::renderGameObjects(
     VkCommandBuffer commandBuffer, std::vector<LveGameObject>& gameObjects,
     const LveCamera& camera) {
   // update
-  int i = 0;
-  for (auto& obj : gameObjects) {
-    i++;
-    float v = 0.0001f;
-    obj.transform.rotation.y =
-        glm::mod<float>(obj.transform.rotation.y + v * i, glm::two_pi<float>());
-    obj.transform.rotation.x = glm::mod<float>(
-        obj.transform.rotation.x + v * 0.5 * i, glm::two_pi<float>());
-  }
+  // int i = 0;
+  // for (auto& obj : gameObjects) {
+  //  i++;
+  //  float v = 0.0001f;
+  //  obj.transform.rotation.y =
+  //      glm::mod<float>(obj.transform.rotation.y + v * i,
+  //      glm::two_pi<float>());
+  //  obj.transform.rotation.x = glm::mod<float>(
+  //      obj.transform.rotation.x + v * 0.5 * i, glm::two_pi<float>());
+  //}
+
   // render
   lvePipeline->bind(commandBuffer);
 
