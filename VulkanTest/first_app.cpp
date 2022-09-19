@@ -1,6 +1,7 @@
 #include "first_app.hpp"
 
 #include "kc_bonus.hpp"
+#include "keyboard_movement_controller.hpp"
 #include "lve_camera.hpp"
 #include "simple_render_system.hpp"
 
@@ -12,6 +13,7 @@
 
 // std
 #include <array>
+#include <chrono>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
@@ -93,13 +95,32 @@ void FirstApp::run() {
   // camera.setViewDirection(glm::vec3{0.f}, glm::vec3{0.5f, 0.f, 1.f});
   camera.setViewTarget(glm::vec3{-1.f, -2.f, 2.f}, glm::vec3{0.f, 0.f, 2.5f});
 
-  while (!lveWindow.shouldClose()) {
-    float aspect = lveRenderer.getAspectRatio();
+  auto viewerObject = LveGameObject::createGameObject();
+  KeyBoardMovementController cameraController{};
 
-    // camera.setOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
+  auto currentTime = std::chrono::high_resolution_clock::now();
+  float MAX_FRAME_TIME = 0.1;
+  while (!lveWindow.shouldClose()) {
+    glfwPollEvents();
+
+    auto newTime = std::chrono::high_resolution_clock::now();
+    float frameTime =
+        std::chrono::duration<float, std::chrono::seconds::period>(newTime -
+                                                                   currentTime)
+            .count();
+
+    currentTime = newTime;
+
+    frameTime = glm::min(frameTime, MAX_FRAME_TIME);
+
+    cameraController.moveInPlaneXZ(lveWindow.getGLFWwindow(), frameTime,
+                                   viewerObject);
+    camera.setViewYXZ(viewerObject.transform.translation,
+                      viewerObject.transform.rotation);
+
+    float aspect = lveRenderer.getAspectRatio();
     camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 10.f);
 
-    glfwPollEvents();
     if (auto commandBuffer = lveRenderer.beginFrame()) {
       // NOTE: separate frame and renderpass, since we need to control
       // multiple render passes.
