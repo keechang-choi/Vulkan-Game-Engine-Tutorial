@@ -117,13 +117,14 @@ std::unique_ptr<lve::LveModel> createCircleModel(lve::LveDevice& device,
   }
   uniqueVertices.push_back({});  // adds center vertex at 0, 0
 
-  std::vector<lve::LveModel::Vertex> vertices{};
+  lve::LveModel::Builder modelBuilder{};
+
   for (int i = 0; i < numSides; i++) {
-    vertices.push_back(uniqueVertices[i]);
-    vertices.push_back(uniqueVertices[(i + 1) % numSides]);
-    vertices.push_back(uniqueVertices[numSides]);
+    modelBuilder.vertices.push_back(uniqueVertices[i]);
+    modelBuilder.vertices.push_back(uniqueVertices[(i + 1) % numSides]);
+    modelBuilder.vertices.push_back(uniqueVertices[numSides]);
   }
-  return std::make_unique<lve::LveModel>(device, vertices);
+  return std::make_unique<lve::LveModel>(device, modelBuilder);
 }
 
 }  // namespace kc_bonus
