@@ -122,3 +122,7 @@ all the base codes and materials from
   - covered:
     - game loop and time
     - camera controller
+- Lec16
+  - covered:
+    - index buffer
+    - staging buffer
