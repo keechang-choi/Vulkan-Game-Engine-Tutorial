@@ -126,3 +126,10 @@ all the base codes and materials from
   - covered:
     - index buffer
     - staging buffer
+- Lec17
+  - covered:
+    - wavefront .obj format
+    - tiny obj loader
+    - .obj format using index buffer (vertex hash)
+  - <img width="376" alt="image" src="https://user-images.githubusercontent.com/49244613/193910632-ab7893cc-b17b-4a13-9a6f-4e027e1ec84c.png">
+
