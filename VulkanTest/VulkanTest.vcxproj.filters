@@ -54,6 +54,9 @@
     <ClCompile Include="keyboard_movement_controller.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="lve_utils.hpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lve_window.hpp">
