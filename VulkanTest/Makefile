@@ -1,6 +1,6 @@
 include .env
 
-CFLAGS = -std=c++17 -I. -I$(VULKAN_INCLUDE_PATH)
+CFLAGS = -std=c++17 -I. -I$(VULKAN_INCLUDE_PATH) -I$(TINYOBJ_PATH)
 LDFLAGS = `pkg-config --static --libs glfw3` -lvulkan 
 
 # spv files
