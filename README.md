@@ -132,4 +132,11 @@ all the base codes and materials from
     - tiny obj loader
     - .obj format using index buffer (vertex hash)
   - <img width="376" alt="image" src="https://user-images.githubusercontent.com/49244613/193910632-ab7893cc-b17b-4a13-9a6f-4e027e1ec84c.png">
+- Lec18
+  - covered:
+    - lighting model. lambertian
+    - directional light, diffuse, ambient
+    - smooth shading, flat shading
+    - surface normal transform
+  - ![vulkan-tut-18](https://user-images.githubusercontent.com/49244613/194142751-f1cfbf39-76bc-49fe-9494-629d3fc2d1ad.gif)
 
