@@ -15,8 +15,8 @@
 namespace {
 // temp code
 struct SimplePushConstantData {
-  glm::mat4 transform{1.0f};
-  alignas(16) glm::vec3 color;
+  glm::mat4 transform{1.f};
+  glm::mat4 normalMatrix{1.f};
 };
 }  // namespace
 
@@ -84,9 +84,11 @@ void SimpleRenderSystem::renderGameObjects(
   auto projectionMatrix = camera.getProjection() * camera.getView();
   for (auto& obj : gameObjects) {
     SimplePushConstantData push{};
-    push.color = obj.color;
+
+    auto modelMatrix = obj.transform.mat4();
     // temp mat mul woth cpu until we cover the uniform buffers
-    push.transform = projectionMatrix * obj.transform.mat4();
+    push.transform = projectionMatrix * modelMatrix;
+    push.normalMatrix = obj.transform.normalMatrix();
 
     vkCmdPushConstants(
         commandBuffer, pipelineLayout,

@@ -136,26 +136,45 @@ void LveModel::draw(VkCommandBuffer commandBuffer) {
 
 std::vector<VkVertexInputBindingDescription>
 LveModel::Vertex::getBindingDescriptions() {
-  std::vector<VkVertexInputBindingDescription> bindingDescription(1);
-  bindingDescription[0].binding = 0;
-  bindingDescription[0].stride = sizeof(Vertex);
-  bindingDescription[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-  return bindingDescription;
+  std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
+  bindingDescriptions[0].binding = 0;
+  bindingDescriptions[0].stride = sizeof(Vertex);
+  bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+  return bindingDescriptions;
 }
 
 std::vector<VkVertexInputAttributeDescription>
 LveModel::Vertex::getAttriibuteDescriptions() {
-  std::vector<VkVertexInputAttributeDescription> attributeDescription(2);
-  attributeDescription[0].binding = 0;
-  attributeDescription[0].location = 0;
-  attributeDescription[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-  attributeDescription[0].offset = offsetof(Vertex, position);
+  std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
 
-  attributeDescription[1].binding = 0;
-  attributeDescription[1].location = 1;
-  attributeDescription[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-  attributeDescription[1].offset = offsetof(Vertex, color);
-  return attributeDescription;
+  attributeDescriptions.push_back({
+      0,                           // location
+      0,                           // binding
+      VK_FORMAT_R32G32B32_SFLOAT,  // format
+      offsetof(Vertex, position),  // offset
+  });
+
+  attributeDescriptions.push_back({
+      1,                           // location
+      0,                           // binding
+      VK_FORMAT_R32G32B32_SFLOAT,  // format
+      offsetof(Vertex, color),     // offset
+  });
+
+  attributeDescriptions.push_back({
+      2,                           // location
+      0,                           // binding
+      VK_FORMAT_R32G32B32_SFLOAT,  // format
+      offsetof(Vertex, normal),    // offset
+  });
+
+  attributeDescriptions.push_back({
+      3,                        // location
+      0,                        // binding
+      VK_FORMAT_R32G32_SFLOAT,  // format
+      offsetof(Vertex, uv),     // offset
+  });
+  return attributeDescriptions;
 }
 
 void LveModel::Builder::loadModel(const std::string& filepath) {
@@ -184,17 +203,13 @@ void LveModel::Builder::loadModel(const std::string& filepath) {
             attrib.vertices[3 * index.vertex_index + 2],
         };
 
-        auto colorIndex = 3 * index.vertex_index + 2;
-        // attrib color 앞자리가 채워져 있는지 확인 필요.
-        if (colorIndex < attrib.colors.size()) {
-          vertex.color = {
-              attrib.vertices[colorIndex - 2],
-              attrib.vertices[colorIndex - 1],
-              attrib.vertices[colorIndex - 0],
-          };
-        } else {
-          vertex.color = {1.f, 1.f, 1.f};
-        }
+        // attrib color 는  vertex와 크기 같게 채워져있고,
+        // color 없으면 1로 채워져 있음.
+        vertex.color = {
+            attrib.colors[3 * index.vertex_index + 0],
+            attrib.colors[3 * index.vertex_index + 1],
+            attrib.colors[3 * index.vertex_index + 2],
+        };
       }
 
       if (index.normal_index >= 0) {
