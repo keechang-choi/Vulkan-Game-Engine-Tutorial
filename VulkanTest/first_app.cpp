@@ -31,16 +31,15 @@ FirstApp::FirstApp() { loadGameObjects(); }
 FirstApp::~FirstApp() {}
 
 void FirstApp::run() {
-  LveBuffer globalUboBuffer{
-      lveDevice,
-      sizeof(GlobalUbo),
-      LveSwapChain::MAX_FRAMES_IN_FLIGHT,
-      VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-      lveDevice.properties.limits.minUniformBufferOffsetAlignment,
-  };
-
-  globalUboBuffer.map();
+  std::vector<std::unique_ptr<LveBuffer>> uboBuffers(
+      LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+  for (int i = 0; i < uboBuffers.size(); i++) {
+    // VK_MEMORY_PROPERTY_HOST_COHERENT_BIT 를 쓰면 flush 신경 안써도 됨.
+    uboBuffers[i] = std::make_unique<LveBuffer>(
+        lveDevice, sizeof(GlobalUbo), 1, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+    uboBuffers[i]->map();
+  }
 
   SimpleRenderSystem simpleRenderSystem{lveDevice,
                                         lveRenderer.getSwapChainRenderPass()};
@@ -87,9 +86,9 @@ void FirstApp::run() {
       // update
       GlobalUbo ubo{};
       ubo.projectionView = camera.getProjection() * camera.getView();
-      globalUboBuffer.writeToIndex(&ubo, frameIndex);
+      uboBuffers[frameIndex]->writeToBuffer(&ubo);
       // since not coherent.
-      globalUboBuffer.flushIndex(frameIndex);
+      uboBuffers[frameIndex]->flush();
 
       // render
       // NOTE: separate frame and renderpass, since we need to control
