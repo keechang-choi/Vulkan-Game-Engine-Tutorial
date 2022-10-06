@@ -57,6 +57,9 @@
     <ClCompile Include="lve_utils.hpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="lve_buffer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lve_window.hpp">
@@ -93,6 +96,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="keyboard_movement_controller.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="lve_buffer.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
