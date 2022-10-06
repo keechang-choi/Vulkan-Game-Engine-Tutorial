@@ -139,4 +139,8 @@ all the base codes and materials from
     - smooth shading, flat shading
     - surface normal transform
   - ![vulkan-tut-18](https://user-images.githubusercontent.com/49244613/194142751-f1cfbf39-76bc-49fe-9494-629d3fc2d1ad.gif)
-
+- Lec19
+  - covered:
+    - uniform buffer, alignment
+    - refactoring buffer abstraction, descriptor set intro
+    - refactoring frame info
