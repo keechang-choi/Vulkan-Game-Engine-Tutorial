@@ -144,3 +144,7 @@ all the base codes and materials from
     - uniform buffer, alignment
     - refactoring buffer abstraction, descriptor set intro
     - refactoring frame info
+- Lec20
+  - covered:
+    - Descriptors, descriptor set, descriptor set layout, descriptor pool
+    - update projection view model matrix to use uniform buffer.
