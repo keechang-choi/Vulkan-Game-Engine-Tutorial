@@ -1,10 +1,10 @@
 #pragma once
 
+#include "lve_descriptors.hpp"
 #include "lve_device.hpp"
 #include "lve_game_object.hpp"
 #include "lve_renderer.hpp"
 #include "lve_window.hpp"
-
 // std
 #include <memory>
 #include <vector>
@@ -28,7 +28,9 @@ class FirstApp {
   LveWindow lveWindow{WIDTH, HEIGHT, "Hello Vulkan! ckc!"};
   LveDevice lveDevice{lveWindow};
   LveRenderer lveRenderer{lveWindow, lveDevice};
-  std::vector<VkCommandBuffer> commandBuffers;
+
+  // NOTE: order or declarations matter (device -> descriptor pool)
+  std::unique_ptr<LveDescriptorPool> globalPool{};
   std::vector<LveGameObject> gameObjects;
 };
 }  // namespace lve
