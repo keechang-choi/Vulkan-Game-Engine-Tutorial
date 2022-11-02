@@ -24,8 +24,12 @@
 namespace lve {
 
 struct GlobalUbo {
-  glm::mat4 projectionView{1.f};
-  glm::vec3 lightDirection = glm::normalize(glm::vec3{1.f, -3.f, -1.f});
+  alignas(16) glm::mat4 projectionView{1.f};
+  alignas(16) glm::vec3 lightDirection = glm::normalize(glm::vec3{
+      1.f,
+      -3.f,
+      -1.f,
+  });
 };
 
 FirstApp::FirstApp() {
@@ -63,8 +67,11 @@ void FirstApp::run() {
         .build(globalDescriptorSets[i]);
   }
 
-  SimpleRenderSystem simpleRenderSystem{lveDevice,
-                                        lveRenderer.getSwapChainRenderPass()};
+  SimpleRenderSystem simpleRenderSystem{
+      lveDevice,
+      lveRenderer.getSwapChainRenderPass(),
+      globalSetLayout->getDescriptorSetLayout(),
+  };
   LveCamera camera{};
   // camera.setViewDirection(glm::vec3{0.f}, glm::vec3{0.5f, 0.f, 1.f});
   camera.setViewTarget(glm::vec3{-1.f, -2.f, 2.f}, glm::vec3{0.f, 0.f, 2.5f});
@@ -103,6 +110,7 @@ void FirstApp::run() {
           frameTime,
           commandBuffer,
           camera,
+          globalDescriptorSets[frameIndex],
       };
 
       // update
