@@ -29,7 +29,7 @@ struct GlobalUbo {
                                           .02f};  // w as intensity
   alignas(16) glm::vec3 lightPosition{-1.f};
   // vec3 다음에 align이 돼야하므로 이것만 있으면 됨.
-  alignas(16) glm::vec3 lightColor{1.f};  // w as intensity
+  alignas(16) glm::vec4 lightColor{1.f};  // w as intensity
 };
 
 FirstApp::FirstApp() {
