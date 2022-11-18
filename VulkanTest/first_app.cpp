@@ -25,11 +25,11 @@ namespace lve {
 
 struct GlobalUbo {
   alignas(16) glm::mat4 projectionView{1.f};
-  alignas(16) glm::vec3 lightDirection = glm::normalize(glm::vec3{
-      -1.f,
-      -3.f,
-      -1.f,
-  });
+  alignas(16) glm::vec4 ambientLightColor{1.f, 1.f, 1.f,
+                                          .02f};  // w as intensity
+  alignas(16) glm::vec3 lightPosition{-1.f};
+  // vec3 다음에 align이 돼야하므로 이것만 있으면 됨.
+  alignas(16) glm::vec3 lightColor{1.f};  // w as intensity
 };
 
 FirstApp::FirstApp() {
