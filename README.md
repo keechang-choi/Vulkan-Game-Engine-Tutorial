@@ -148,3 +148,9 @@ all the base codes and materials from
   - covered:
     - Descriptors, descriptor set, descriptor set layout, descriptor pool
     - update projection view model matrix to use uniform buffer.
+- Lec21
+  - covered:
+    - Point light, attenuation
+    - floor object
+  - ![image](https://user-images.githubusercontent.com/49244613/202700802-8d6f446c-d5ac-4dec-a52e-2770ded9dd8c.png)
+
