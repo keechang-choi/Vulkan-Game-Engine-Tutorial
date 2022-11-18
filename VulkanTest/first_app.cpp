@@ -101,7 +101,7 @@ void FirstApp::run() {
                       viewerObject.transform.rotation);
 
     float aspect = lveRenderer.getAspectRatio();
-    camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 10.f);
+    camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 100.f);
 
     if (auto commandBuffer = lveRenderer.beginFrame()) {
       int frameIndex = lveRenderer.getFrameIndex();
@@ -148,6 +148,13 @@ void FirstApp::loadGameObjects() {
   smoothVase.transform.translation = {-.5f, .5f, 0.f};
   smoothVase.transform.scale = {3.f, 1.5f, 3.f};
   gameObjects.push_back(std::move(smoothVase));
+
+  lveModel = LveModel::createModelFromFile(lveDevice, "models/quad.obj");
+  auto floor = LveGameObject::createGameObject();
+  floor.model = lveModel;
+  floor.transform.translation = {0.f, .5f, 0.f};
+  floor.transform.scale = {3.f, 1.f, 3.f};
+  gameObjects.push_back(std::move(floor));
 }
 
 }  // namespace lve
