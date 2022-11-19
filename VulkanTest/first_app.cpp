@@ -112,6 +112,7 @@ void FirstApp::run() {
           commandBuffer,
           camera,
           globalDescriptorSets[frameIndex],
+          gameObjects,
       };
 
       // update
@@ -125,7 +126,7 @@ void FirstApp::run() {
       // NOTE: separate frame and renderpass, since we need to control
       // multiple render passes.
       lveRenderer.beginSwapChainRenderPass(commandBuffer);
-      simpleRenderSystem.renderGameObjects(frameInfo, gameObjects);
+      simpleRenderSystem.renderGameObjects(frameInfo);
       lveRenderer.endSwapChainRenderPass(commandBuffer);
       lveRenderer.endFrame();
     }
@@ -140,21 +141,21 @@ void FirstApp::loadGameObjects() {
   flatVase.model = lveModel;
   flatVase.transform.translation = {.5f, .5f, 0.f};
   flatVase.transform.scale = {3.f, 1.5f, 3.f};
-  gameObjects.push_back(std::move(flatVase));
+  gameObjects.emplace(flatVase.getId(), std::move(flatVase));
 
   lveModel = LveModel::createModelFromFile(lveDevice, "models/smooth_vase.obj");
   auto smoothVase = LveGameObject::createGameObject();
   smoothVase.model = lveModel;
   smoothVase.transform.translation = {-.5f, .5f, 0.f};
   smoothVase.transform.scale = {3.f, 1.5f, 3.f};
-  gameObjects.push_back(std::move(smoothVase));
+  gameObjects.emplace(smoothVase.getId(), std::move(smoothVase));
 
   lveModel = LveModel::createModelFromFile(lveDevice, "models/quad.obj");
   auto floor = LveGameObject::createGameObject();
   floor.model = lveModel;
   floor.transform.translation = {0.f, .5f, 0.f};
   floor.transform.scale = {3.f, 1.f, 3.f};
-  gameObjects.push_back(std::move(floor));
+  gameObjects.emplace(floor.getId(), std::move(floor));
 }
 
 }  // namespace lve
