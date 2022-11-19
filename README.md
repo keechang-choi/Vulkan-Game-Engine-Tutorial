@@ -153,4 +153,9 @@ all the base codes and materials from
     - Point light, attenuation
     - floor object
   - ![image](https://user-images.githubusercontent.com/49244613/202700802-8d6f446c-d5ac-4dec-a52e-2770ded9dd8c.png)
+- Lec22
+  - covered:
+    - per fragment lighting.
+    - ECS refactoring - game objects controlled by a map with key of ID.
+  - ![image](https://user-images.githubusercontent.com/49244613/202851398-abd3cc96-8205-46d8-a731-eaadfd1bff5f.png)
 
