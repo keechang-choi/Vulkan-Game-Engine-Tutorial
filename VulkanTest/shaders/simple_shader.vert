@@ -1,20 +1,23 @@
 #version 450
 
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 color;
-layout(location = 2) in vec3 normal;
-layout(location = 3) in vec2 uv;
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 color;
+layout (location = 2) in vec3 normal;
+layout (location = 3) in vec2 uv;
 
-layout(location = 0) out vec3 fragColor;
+layout (location = 0) out vec3 fragColor;
+layout (location = 1) out vec3 fragPosWorld;
+layout (location = 2) out vec3 fragNormalWorld;
 
-layout(set = 0, binding = 0) uniform GlobalUbo{
+
+layout (set = 0, binding = 0) uniform GlobalUbo{
     mat4 projectionViewMatrix;
     vec4 ambientLightColor; // w as intensity
     vec3 lightPosition;
     vec4 lightColor;
 } ubo;
 
-layout(push_constant) uniform Push{
+layout (push_constant) uniform Push{
 	mat4 modelMatrix; 
     mat4 normalMatrix;
 } push;
@@ -27,16 +30,7 @@ void main() {
   // vec3 normalWorldSpace = normalize(mat3(push.modelMatrix) * normal);
   // vec3 normalWorldSpace = normalize((push.modelMatrix * vec4(normal, 0.0)).xyz);
   // mat3 normalMatrix = transpose(inverse(mat3(push.modelMatrix));
-  vec3 normalWorldSpace = normalize(mat3(push.normalMatrix) * normal);
-
-  vec3 directionToLight = ubo.lightPosition - positionWorld.xyz;
-  float attenuation = 1.0 / dot(directionToLight, directionToLight); // distance squared
-
-  directionToLight = normalize(directionToLight);
-
-  vec3 lightColor = ubo.lightColor.xyz * ubo.lightColor.w * attenuation;
-  vec3 ambientLight = ubo.ambientLightColor.xyz * ubo.ambientLightColor.w;
-  vec3 diffuseLight = lightColor * max(dot(normalWorldSpace, directionToLight), 0);
-
-  fragColor = (diffuseLight + ambientLight) * color;
+  fragNormalWorld = normalize(mat3(push.normalMatrix) * normal);
+  fragPosWorld = positionWorld.xyz;
+  fragColor = color;
 }
