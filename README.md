@@ -161,3 +161,8 @@ all the base codes and materials from
 - Lec23
   - covered:
     - build system refactoring with cmake
+- Lec24
+  - covered:
+    - billboard - screen aligned
+    - point light render system
+  - ![vulkan-tutorial24-2](https://user-images.githubusercontent.com/49244613/202894579-deaaf732-49da-4f0b-8a3c-ba08ec2cbd80.gif)
