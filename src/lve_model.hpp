@@ -23,7 +23,7 @@ class LveModel {
     static std::vector<VkVertexInputBindingDescription>
     getBindingDescriptions();
     static std::vector<VkVertexInputAttributeDescription>
-    getAttriibuteDescriptions();
+    getAttributeDescriptions();
 
     bool operator==(const Vertex &other) const {
       return position == other.position && color == other.color &&

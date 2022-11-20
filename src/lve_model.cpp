@@ -134,7 +134,7 @@ LveModel::Vertex::getBindingDescriptions() {
 }
 
 std::vector<VkVertexInputAttributeDescription>
-LveModel::Vertex::getAttriibuteDescriptions() {
+LveModel::Vertex::getAttributeDescriptions() {
   std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
 
   attributeDescriptions.push_back({
