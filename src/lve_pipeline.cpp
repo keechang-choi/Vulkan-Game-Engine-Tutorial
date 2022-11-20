@@ -9,6 +9,10 @@
 #include <iostream>
 #include <stdexcept>
 
+#ifndef ENGINE_DIR
+#define ENGINE_DIR "../"
+#endif
+
 namespace lve {
 
 LvePipeline::LvePipeline(LveDevice& device, const std::string& vertFilepath,
@@ -25,10 +29,11 @@ LvePipeline::~LvePipeline() {
 }
 
 std::vector<char> LvePipeline::readFile(const std::string& filepath) {
-  std::ifstream file(filepath.c_str(), std::ios::ate | std::ios::binary);
+  std::string enginePath = ENGINE_DIR + filepath;
+  std::ifstream file(enginePath.c_str(), std::ios::ate | std::ios::binary);
 
   if (!file.is_open()) {
-    throw std::runtime_error("failed to open file: " + filepath);
+    throw std::runtime_error("failed to open file: " + enginePath);
   }
 
   size_t fileSize = static_cast<size_t>(file.tellg());

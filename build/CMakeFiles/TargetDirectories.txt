@@ -1,0 +1,4 @@
+/home/kc/dev/Vulkan-Game-Engine-Tutorial/build/CMakeFiles/rebuild_cache.dir
+/home/kc/dev/Vulkan-Game-Engine-Tutorial/build/CMakeFiles/edit_cache.dir
+/home/kc/dev/Vulkan-Game-Engine-Tutorial/build/CMakeFiles/Shaders.dir
+/home/kc/dev/Vulkan-Game-Engine-Tutorial/build/CMakeFiles/LveEngine.dir

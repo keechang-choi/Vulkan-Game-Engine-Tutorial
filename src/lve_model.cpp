@@ -14,6 +14,10 @@
 #include <iostream>
 #include <string>
 
+#ifndef ENGINE_DIR
+#define ENGINE_DIR "../"
+#endif
+
 namespace std {
 template <>
 struct hash<lve::LveModel::Vertex> {
@@ -37,7 +41,7 @@ LveModel ::~LveModel() {}
 std::unique_ptr<LveModel> LveModel::createModelFromFile(
     LveDevice& device, const std::string& filepath) {
   LveModel::Builder builder{};
-  builder.loadModel(filepath);
+  builder.loadModel(ENGINE_DIR + filepath);
   std::cout << "Vertex count: " << builder.vertices.size() << std::endl;
   return std::make_unique<LveModel>(device, builder);
 }
