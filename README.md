@@ -158,4 +158,6 @@ all the base codes and materials from
     - per fragment lighting.
     - ECS refactoring - game objects controlled by a map with key of ID.
   - ![image](https://user-images.githubusercontent.com/49244613/202851398-abd3cc96-8205-46d8-a731-eaadfd1bff5f.png)
-
+- Lec23
+  - covered:
+    - build system refactoring with cmake
