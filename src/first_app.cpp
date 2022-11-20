@@ -24,7 +24,8 @@
 namespace lve {
 
 struct GlobalUbo {
-  alignas(16) glm::mat4 projectionView{1.f};
+  alignas(16) glm::mat4 projection{1.f};
+  alignas(16) glm::mat4 view{1.f};
   alignas(16) glm::vec4 ambientLightColor{1.f, 1.f, 1.f,
                                           .02f};  // w as intensity
   alignas(16) glm::vec3 lightPosition{-1.f};
@@ -117,7 +118,9 @@ void FirstApp::run() {
 
       // update
       GlobalUbo ubo{};
-      ubo.projectionView = camera.getProjection() * camera.getView();
+      ubo.projection = camera.getProjection();
+      ubo.view = camera.getView();
+
       uboBuffers[frameIndex]->writeToBuffer(&ubo);
       // since not coherent.
       uboBuffers[frameIndex]->flush();
