@@ -35,3 +35,5 @@
 x64/*
 VulkanTest/x64/*
 !VulkanTest/models/*
+
+build

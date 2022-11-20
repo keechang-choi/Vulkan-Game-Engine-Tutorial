@@ -80,17 +80,17 @@ void LvePipeline::createGraphicsPipeline(const std::string& vertFilepath,
   shaderStages[1].pNext = nullptr;
   shaderStages[1].pSpecializationInfo = nullptr;
 
-  auto bindingDescriptions = LveModel::Vertex::getBindingDescriptions();
-  auto attributeDescription = LveModel::Vertex::getAttriibuteDescriptions();
+  auto& bindingDescriptions = configInfo.bindingDescriptions;
+  auto& attributeDescriptions = configInfo.attributeDescriptions;
 
   VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
   vertexInputInfo.sType =
       VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
   vertexInputInfo.vertexAttributeDescriptionCount =
-      static_cast<uint32_t>(attributeDescription.size());
+      static_cast<uint32_t>(attributeDescriptions.size());
   vertexInputInfo.vertexBindingDescriptionCount =
       static_cast<uint32_t>(bindingDescriptions.size());
-  vertexInputInfo.pVertexAttributeDescriptions = attributeDescription.data();
+  vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
   vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
 
   VkPipelineColorBlendAttachmentState colorBlendAttachment{};
@@ -218,5 +218,9 @@ void LvePipeline::defaultPipelineConfigInfo(PipelineConfigInfo& configInfo) {
   configInfo.dynamicStateInfo.dynamicStateCount =
       static_cast<uint32_t>(configInfo.dynamicStateEnables.size());
   configInfo.dynamicStateInfo.flags = 0;
+
+  configInfo.bindingDescriptions = LveModel::Vertex::getBindingDescriptions();
+  configInfo.attributeDescriptions =
+      LveModel::Vertex::getAttributeDescriptions();
 }
 }  // namespace lve

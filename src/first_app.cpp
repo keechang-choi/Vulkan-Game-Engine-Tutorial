@@ -6,7 +6,8 @@
 #include "lve_camera.hpp"
 #include "lve_descriptors.hpp"
 #include "lve_model.hpp"
-#include "simple_render_system.hpp"
+#include "systems/point_light_system.hpp"
+#include "systems/simple_render_system.hpp"
 
 // libs
 #define GLM_FORCE_RADIANS
@@ -24,7 +25,8 @@
 namespace lve {
 
 struct GlobalUbo {
-  alignas(16) glm::mat4 projectionView{1.f};
+  alignas(16) glm::mat4 projection{1.f};
+  alignas(16) glm::mat4 view{1.f};
   alignas(16) glm::vec4 ambientLightColor{1.f, 1.f, 1.f,
                                           .02f};  // w as intensity
   alignas(16) glm::vec3 lightPosition{-1.f};
@@ -68,6 +70,11 @@ void FirstApp::run() {
   }
 
   SimpleRenderSystem simpleRenderSystem{
+      lveDevice,
+      lveRenderer.getSwapChainRenderPass(),
+      globalSetLayout->getDescriptorSetLayout(),
+  };
+  PointLightSystem pointLightSystem{
       lveDevice,
       lveRenderer.getSwapChainRenderPass(),
       globalSetLayout->getDescriptorSetLayout(),
@@ -117,7 +124,9 @@ void FirstApp::run() {
 
       // update
       GlobalUbo ubo{};
-      ubo.projectionView = camera.getProjection() * camera.getView();
+      ubo.projection = camera.getProjection();
+      ubo.view = camera.getView();
+
       uboBuffers[frameIndex]->writeToBuffer(&ubo);
       // since not coherent.
       uboBuffers[frameIndex]->flush();
@@ -127,6 +136,7 @@ void FirstApp::run() {
       // multiple render passes.
       lveRenderer.beginSwapChainRenderPass(commandBuffer);
       simpleRenderSystem.renderGameObjects(frameInfo);
+      pointLightSystem.render(frameInfo);
       lveRenderer.endSwapChainRenderPass(commandBuffer);
       lveRenderer.endFrame();
     }
