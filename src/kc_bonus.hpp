@@ -2,7 +2,7 @@
 
 #include "lve_game_object.hpp"
 #include "lve_model.hpp"
-#include "simple_render_system.hpp"
+#include "systems/simple_render_system.hpp"
 
 // libs
 #define GLM_FORCE_RADIANS
