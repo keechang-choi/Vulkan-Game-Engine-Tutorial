@@ -166,3 +166,9 @@ all the base codes and materials from
     - billboard - screen aligned
     - point light render system
   - ![vulkan-tutorial24-2](https://user-images.githubusercontent.com/49244613/202894579-deaaf732-49da-4f0b-8a3c-ba08ec2cbd80.gif)
+- Lec25
+  - covered:
+    - multiple point light 
+      - multiple light calculation in shader
+      - multiple light point rendering
+  - ![vulkan-tut-25](https://user-images.githubusercontent.com/49244613/205503127-a7127bc3-6890-4c0b-a72e-5822f7102cae.gif)
