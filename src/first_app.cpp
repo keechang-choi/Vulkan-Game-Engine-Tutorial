@@ -24,16 +24,6 @@
 
 namespace lve {
 
-struct GlobalUbo {
-  alignas(16) glm::mat4 projection{1.f};
-  alignas(16) glm::mat4 view{1.f};
-  alignas(16) glm::vec4 ambientLightColor{1.f, 1.f, 1.f,
-                                          .02f};  // w as intensity
-  alignas(16) glm::vec3 lightPosition{-1.f};
-  // vec3 다음에 align이 돼야하므로 이것만 있으면 됨.
-  alignas(16) glm::vec4 lightColor{1.f};  // w as intensity
-};
-
 FirstApp::FirstApp() {
   globalPool = LveDescriptorPool::Builder(lveDevice)
                    .setMaxSets(LveSwapChain::MAX_FRAMES_IN_FLIGHT)
@@ -126,6 +116,7 @@ void FirstApp::run() {
       GlobalUbo ubo{};
       ubo.projection = camera.getProjection();
       ubo.view = camera.getView();
+      pointLightSystem.update(frameInfo, ubo);
 
       uboBuffers[frameIndex]->writeToBuffer(&ubo);
       // since not coherent.
@@ -166,6 +157,11 @@ void FirstApp::loadGameObjects() {
   floor.transform.translation = {0.f, .5f, 0.f};
   floor.transform.scale = {3.f, 1.f, 3.f};
   gameObjects.emplace(floor.getId(), std::move(floor));
+
+  {
+    auto pointLight = LveGameObject::makePointLight(0.2f);
+    gameObjects.emplace(pointLight.getId(), std::move(pointLight));
+  }
 }
 
 }  // namespace lve
