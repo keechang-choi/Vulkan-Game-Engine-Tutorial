@@ -31,7 +31,7 @@ glm::mat4 TransformComponent::mat4() {
 }
 
 glm::mat3 TransformComponent::normalMatrix() {
-  // NOTE: ���� ����ϴ� ���� ȿ���������� ��Ȯ���� ����.
+  // NOTE: 직접 계산하는 것이 효율적인지는 정확하지 않음.
   const float c3 = glm::cos(rotation.z);
   const float s3 = glm::sin(rotation.z);
   const float c2 = glm::cos(rotation.x);

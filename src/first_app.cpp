@@ -30,8 +30,7 @@ struct GlobalUbo {
   alignas(16) glm::vec4 ambientLightColor{1.f, 1.f, 1.f,
                                           .02f};  // w as intensity
   alignas(16) glm::vec3 lightPosition{-1.f};
-  // vec3 ������ align�� �ž��ϹǷ� �̰͸�
-  // ������ ��.
+  // vec3 다음에 align이 돼야하므로 이것만 있으면 됨.
   alignas(16) glm::vec4 lightColor{1.f};  // w as intensity
 };
 
@@ -50,7 +49,7 @@ void FirstApp::run() {
   std::vector<std::unique_ptr<LveBuffer>> uboBuffers(
       LveSwapChain::MAX_FRAMES_IN_FLIGHT);
   for (int i = 0; i < uboBuffers.size(); i++) {
-    // VK_MEMORY_PROPERTY_HOST_COHERENT_BIT �� ���� flush �Ű� �Ƚᵵ ��.
+    // VK_MEMORY_PROPERTY_HOST_COHERENT_BIT 를 쓰면 flush 신경 안써도 됨.
     uboBuffers[i] = std::make_unique<LveBuffer>(
         lveDevice, sizeof(GlobalUbo), 1, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
