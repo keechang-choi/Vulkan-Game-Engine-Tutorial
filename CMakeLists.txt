@@ -1,4 +1,11 @@
-include(./.env.cmake OPTIONAL RESULT_VARIABLE LOCAL_ENV)
+if (WIN32)
+  message(STATUS "OS: windows")
+  include(./envWindowsExample.cmake OPTIONAL RESULT_VARIABLE LOCAL_ENV)
+else()
+  message(STATUS "OS: not windows")
+  include(./envUnixExample.cmake OPTIONAL RESULT_VARIABLE LOCAL_ENV)
+endif()
+
 message(STATUS "Local .env.cmake: ${LOCAL_ENV}")
 
 cmake_minimum_required(VERSION 3.11.0)
@@ -52,6 +59,7 @@ if (NOT GLFW_LIB)
 	message(FATAL_ERROR "Could not find glfw library!")
 else()
 	message(STATUS "Using glfw lib at: ${GLFW_LIB}")
+  message(STATUS "Using glfw header at: ${GLFW_INCLUDE_DIRS}")
 endif()
 
 include_directories(external)
