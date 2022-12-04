@@ -31,7 +31,7 @@ glm::mat4 TransformComponent::mat4() {
 }
 
 glm::mat3 TransformComponent::normalMatrix() {
-  // NOTE: Á÷Á¢ °è»êÇÏ´Â °ÍÀÌ È¿À²ÀûÀÎÁö´Â Á¤È®ÇÏÁö ¾ÊÀ½.
+  // NOTE: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
   const float c3 = glm::cos(rotation.z);
   const float s3 = glm::sin(rotation.z);
   const float c2 = glm::cos(rotation.x);
@@ -57,6 +57,16 @@ glm::mat3 TransformComponent::normalMatrix() {
           invScale.z * (c1 * c2),
       },
   };
+}
+
+LveGameObject LveGameObject::makePointLight(float intensity, float radius,
+                                            glm::vec3 color) {
+  LveGameObject gameObj = LveGameObject::createGameObject();
+  gameObj.color = color;
+  gameObj.transform.scale.x = radius;
+  gameObj.pointLight = std::make_unique<PointLightComponent>();
+  gameObj.pointLight->lightIntensity = intensity;
+  return gameObj;
 }
 
 }  // namespace lve
