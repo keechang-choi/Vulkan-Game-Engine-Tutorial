@@ -170,5 +170,5 @@ all the base codes and materials from
   - covered:
     - multiple point light 
       - multiple light calculation in shader
-      - multiple light point rendering
+      - multiple light source rendering
   - ![vulkan-tut-25](https://user-images.githubusercontent.com/49244613/205503127-a7127bc3-6890-4c0b-a72e-5822f7102cae.gif)
