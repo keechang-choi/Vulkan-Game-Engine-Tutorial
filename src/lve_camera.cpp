@@ -59,9 +59,9 @@ void LveCamera::setViewDirection(glm::vec3 position, glm::vec3 direction,
   inverseViewMatrix[2][0] = w.x;
   inverseViewMatrix[2][1] = w.y;
   inverseViewMatrix[2][2] = w.z;
-  inverseViewMatrix[3][0] = glm::dot(u, position);
-  inverseViewMatrix[3][1] = glm::dot(v, position);
-  inverseViewMatrix[3][2] = glm::dot(w, position);
+  inverseViewMatrix[3][0] = position.x;
+  inverseViewMatrix[3][1] = position.y;
+  inverseViewMatrix[3][2] = position.z;
 }
 
 void LveCamera::setViewTarget(glm::vec3 position, glm::vec3 target,
@@ -106,9 +106,9 @@ void LveCamera::setViewYXZ(glm::vec3 position, glm::vec3 rotation) {
   inverseViewMatrix[2][0] = w.x;
   inverseViewMatrix[2][1] = w.y;
   inverseViewMatrix[2][2] = w.z;
-  inverseViewMatrix[3][0] = glm::dot(u, position);
-  inverseViewMatrix[3][1] = glm::dot(v, position);
-  inverseViewMatrix[3][2] = glm::dot(w, position);
+  inverseViewMatrix[3][0] = position.x;
+  inverseViewMatrix[3][1] = position.y;
+  inverseViewMatrix[3][2] = position.z;
 }
 
 }  // namespace lve
