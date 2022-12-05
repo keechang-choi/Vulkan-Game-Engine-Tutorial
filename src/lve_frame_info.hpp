@@ -18,6 +18,7 @@ struct PointLight {
 struct GlobalUbo {
   alignas(16) glm::mat4 projection{1.f};
   alignas(16) glm::mat4 view{1.f};
+  alignas(16) glm::mat4 inverseView{1.f};
   alignas(16) glm::vec4 ambientLightColor{1.f, 1.f, 1.f,
                                           .02f};  // w as intensity
   PointLight pointLights[MAX_LIGHTS];
