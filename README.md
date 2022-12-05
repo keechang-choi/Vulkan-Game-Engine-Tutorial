@@ -172,3 +172,10 @@ all the base codes and materials from
       - multiple light calculation in shader
       - multiple light source rendering
   - ![vulkan-tut-25](https://user-images.githubusercontent.com/49244613/205503127-a7127bc3-6890-4c0b-a72e-5822f7102cae.gif)
+- Lec26
+  - covered:
+    - specular lighting
+    - Blinn-Phong model, inverse view matrix and half angle vector
+  - ![image](https://user-images.githubusercontent.com/49244613/205640257-d2796ac6-b9bd-4713-8eee-1aacfa55f4a4.png)
+
+    
