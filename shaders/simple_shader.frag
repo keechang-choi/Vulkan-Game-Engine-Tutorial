@@ -42,16 +42,17 @@ void main() {
     directionToLight = normalize(directionToLight);
     
     float cosAngIncidence =  max(dot(surfaceNormal, directionToLight), 0);
-    vec3 lightColor = light.color.xyz * light.color.w * attenuation;
-    diffuseLight += lightColor * cosAngIncidence;
+    vec3 intensity = light.color.xyz * light.color.w * attenuation;
+    
+    diffuseLight += intensity * cosAngIncidence;
  
     // specular lighting
     vec3 halfAngle = normalize(directionToLight + viewDirection);
     // to ignore the case when viewer and light are on a opposite site
     float blinnTerm = dot(surfaceNormal, halfAngle);
     blinnTerm = clamp(blinnTerm, 0, 1);
-    blinnTerm = pow(blinnTerm, 32.0);
-    specularLight += light.color.xyz * light.color.w * blinnTerm;
+    blinnTerm = pow(blinnTerm, 128.0);
+    specularLight += intensity * blinnTerm;
   }
   
   
