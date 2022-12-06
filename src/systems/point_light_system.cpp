@@ -9,6 +9,7 @@
 // std
 #include <array>
 #include <iostream>
+#include <map>
 #include <memory>
 #include <stdexcept>
 
@@ -83,15 +84,29 @@ void PointLightSystem::render(FrameInfo& frameInfo) {
   //      obj.transform.rotation.x + v * 0.5 * i, glm::two_pi<float>());
   //}
 
+  // sort lights
+  std::map<float, LveGameObject::id_t> sorted;
+  for (auto& kv : frameInfo.gameObjects) {
+    auto& obj = kv.second;
+    if (obj.pointLight == nullptr) continue;
+
+    // calculate distance
+    auto offset = frameInfo.camera.getPosition() - obj.transform.translation;
+    float disSquared = glm::dot(offset, offset);
+    sorted[disSquared] = obj.getId();
+  }
+
   // render
   lvePipeline->bind(frameInfo.commandBuffer);
 
   vkCmdBindDescriptorSets(frameInfo.commandBuffer,
                           VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1,
                           &frameInfo.globalDescriptorSet, 0, nullptr);
-  for (auto& kv : frameInfo.gameObjects) {
-    auto& obj = kv.second;
-    if (obj.pointLight == nullptr) continue;
+  // iterate through sroted lights in reverse order
+  for (auto it = sorted.rbegin(); it != sorted.rend(); ++it) {
+    // use gmae obj id to find light object
+    auto& obj = frameInfo.gameObjects.at(it->second);
+
     PointLightPushConstants push{};
     push.position = glm::vec4(obj.transform.translation, 1.f);
     push.color = glm::vec4(obj.color, obj.pointLight->lightIntensity);

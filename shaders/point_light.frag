@@ -30,6 +30,6 @@ void main(){
     if (dis >= push.radius){
         discard;
     }
-    float alpha = 0.5* (cos(dis / push.radius * M_PI) + 1.0);
-    outColor = vec4(push.color.xyz, alpha);
+    float cosDis = 0.5 * (cos(dis / push.radius * M_PI) + 1.0);
+    outColor = vec4(push.color.xyz + cosDis * 0.5, cosDis);
 }
