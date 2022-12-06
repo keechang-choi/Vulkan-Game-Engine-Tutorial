@@ -177,5 +177,9 @@ all the base codes and materials from
     - specular lighting
     - Blinn-Phong model, inverse view matrix and half angle vector
   - ![image](https://user-images.githubusercontent.com/49244613/205640257-d2796ac6-b9bd-4713-8eee-1aacfa55f4a4.png)
+- Lec27
+  - covered:
+    - alpha blending
+    - sorting semi-transparents object in rendering
+  - ![vulkan-tut27](https://user-images.githubusercontent.com/49244613/205864135-b482708f-81c9-4b2c-beca-11991455516f.gif)
 
-    
