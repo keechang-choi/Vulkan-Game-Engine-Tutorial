@@ -168,7 +168,7 @@ void FirstApp::loadGameObjects() {
   };
   // NOTE: move 된 unique_ptr은 brace 안으로 넣어서 더이상 접근 못하게 명시.
   for (int i = 0; i < lightColors.size(); i++) {
-    auto pointLight = LveGameObject::makePointLight(0.2f);
+    auto pointLight = LveGameObject::makePointLight(0.2f, 0.2f);
     pointLight.color = lightColors[i];
     auto rotateLight = glm::rotate(
         glm::mat4(1.f), (i * glm::two_pi<float>() / lightColors.size()),

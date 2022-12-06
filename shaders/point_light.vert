@@ -32,7 +32,7 @@ layout (push_constant) uniform Push{
 } push;
 
 void main(){
-    fragOffset = OFFSETS[gl_VertexIndex];
+    fragOffset = push.radius * OFFSETS[gl_VertexIndex];
     vec3 cameraRightWorld = {ubo.view[0][0], ubo.view[1][0], ubo.view[2][0]};
     vec3 cameraUpWorld = {ubo.view[0][1], ubo.view[1][1], ubo.view[2][1]};
 
@@ -40,7 +40,7 @@ void main(){
     //  + push.radius * fragOffset.x * cameraRightWorld
     //  + push.radius * fragOffset.y * cameraUpWorld;
     vec4 lightInCameraSpace = ubo.view * vec4(push.position.xyz, 1.0);
-    vec4 positionInCameraSpace = lightInCameraSpace + push.radius * vec4(fragOffset, 0.0, 0.0);
+    vec4 positionInCameraSpace = lightInCameraSpace + vec4(fragOffset, 0.0, 0.0);
 
     gl_Position = ubo.projection * positionInCameraSpace;
     
