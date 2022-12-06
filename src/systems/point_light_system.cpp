@@ -59,6 +59,8 @@ void PointLightSystem::createPipeline(VkRenderPass renderPass) {
 
   PipelineConfigInfo pipelineConfig{};
   LvePipeline::defaultPipelineConfigInfo(pipelineConfig);
+  LvePipeline::enableAlphaBlending(pipelineConfig);
+
   pipelineConfig.attributeDescriptions.clear();
   pipelineConfig.bindingDescriptions.clear();
   pipelineConfig.renderPass = renderPass;

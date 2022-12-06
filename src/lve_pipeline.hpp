@@ -21,7 +21,9 @@ struct PipelineConfigInfo {
   // multi sample
   VkPipelineMultisampleStateCreateInfo multisampleInfo;
   // color blend attachment
+  VkPipelineColorBlendAttachmentState colorBlendAttachment;
   // color blend
+  VkPipelineColorBlendStateCreateInfo colorBlendInfo;
   VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
   std::vector<VkDynamicState> dynamicStateEnables;
   VkPipelineDynamicStateCreateInfo dynamicStateInfo;
@@ -44,6 +46,7 @@ class LvePipeline {
   void bind(VkCommandBuffer commandBuffers);
 
   static void defaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
+  static void enableAlphaBlending(PipelineConfigInfo& configInfo);
 
  private:
   static std::vector<char> readFile(const std::string& filepath);
