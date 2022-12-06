@@ -93,30 +93,6 @@ void LvePipeline::createGraphicsPipeline(const std::string& vertFilepath,
   vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
   vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
 
-  VkPipelineColorBlendAttachmentState colorBlendAttachment{};
-  colorBlendAttachment.colorWriteMask =
-      VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
-      VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-  colorBlendAttachment.blendEnable = VK_FALSE;
-  colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;   // Optional
-  colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;  // Optional
-  colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;              // Optional
-  colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;   // Optional
-  colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;  // Optional
-  colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;              // Optional
-
-  VkPipelineColorBlendStateCreateInfo colorBlendInfo{};
-  colorBlendInfo.sType =
-      VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-  colorBlendInfo.logicOpEnable = VK_FALSE;
-  colorBlendInfo.logicOp = VK_LOGIC_OP_COPY;  // Optional
-  colorBlendInfo.attachmentCount = 1;
-  colorBlendInfo.pAttachments = &colorBlendAttachment;
-  colorBlendInfo.blendConstants[0] = 0.0f;  // Optional
-  colorBlendInfo.blendConstants[1] = 0.0f;  // Optional
-  colorBlendInfo.blendConstants[2] = 0.0f;  // Optional
-  colorBlendInfo.blendConstants[3] = 0.0f;  // Optional
-
   VkGraphicsPipelineCreateInfo pipelineInfo{};
   pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
   pipelineInfo.stageCount = 2;
@@ -126,7 +102,7 @@ void LvePipeline::createGraphicsPipeline(const std::string& vertFilepath,
   pipelineInfo.pViewportState = &configInfo.viewportInfo;
   pipelineInfo.pRasterizationState = &configInfo.rasterizationInfo;
   pipelineInfo.pMultisampleState = &configInfo.multisampleInfo;
-  pipelineInfo.pColorBlendState = &colorBlendInfo;
+  pipelineInfo.pColorBlendState = &configInfo.colorBlendInfo;
   pipelineInfo.pDepthStencilState = &configInfo.depthStencilInfo;
   pipelineInfo.pDynamicState = &configInfo.dynamicStateInfo;
 
@@ -197,6 +173,32 @@ void LvePipeline::defaultPipelineConfigInfo(PipelineConfigInfo& configInfo) {
   configInfo.multisampleInfo.alphaToCoverageEnable = VK_FALSE;  // Optional
   configInfo.multisampleInfo.alphaToOneEnable = VK_FALSE;       // Optional
 
+  configInfo.colorBlendAttachment.colorWriteMask =
+      VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
+      VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+  configInfo.colorBlendAttachment.blendEnable = VK_FALSE;
+  configInfo.colorBlendAttachment.srcColorBlendFactor =
+      VK_BLEND_FACTOR_ONE;  // Optional
+  configInfo.colorBlendAttachment.dstColorBlendFactor =
+      VK_BLEND_FACTOR_ZERO;                                        // Optional
+  configInfo.colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;  // Optional
+  configInfo.colorBlendAttachment.srcAlphaBlendFactor =
+      VK_BLEND_FACTOR_ONE;  // Optional
+  configInfo.colorBlendAttachment.dstAlphaBlendFactor =
+      VK_BLEND_FACTOR_ZERO;                                        // Optional
+  configInfo.colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;  // Optional
+
+  configInfo.colorBlendInfo.sType =
+      VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+  configInfo.colorBlendInfo.logicOpEnable = VK_FALSE;
+  configInfo.colorBlendInfo.logicOp = VK_LOGIC_OP_COPY;  // Optional
+  configInfo.colorBlendInfo.attachmentCount = 1;
+  configInfo.colorBlendInfo.pAttachments = &configInfo.colorBlendAttachment;
+  configInfo.colorBlendInfo.blendConstants[0] = 0.0f;  // Optional
+  configInfo.colorBlendInfo.blendConstants[1] = 0.0f;  // Optional
+  configInfo.colorBlendInfo.blendConstants[2] = 0.0f;  // Optional
+  configInfo.colorBlendInfo.blendConstants[3] = 0.0f;  // Optional
+
   configInfo.depthStencilInfo.sType =
       VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
   configInfo.depthStencilInfo.depthTestEnable = VK_TRUE;
@@ -223,4 +225,20 @@ void LvePipeline::defaultPipelineConfigInfo(PipelineConfigInfo& configInfo) {
   configInfo.attributeDescriptions =
       LveModel::Vertex::getAttributeDescriptions();
 }
+void LvePipeline::enableAlphaBlending(PipelineConfigInfo& configInfo) {
+  configInfo.colorBlendAttachment.blendEnable = VK_TRUE;
+
+  configInfo.colorBlendAttachment.colorWriteMask =
+      VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
+      VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+  configInfo.colorBlendAttachment.srcColorBlendFactor =
+      VK_BLEND_FACTOR_SRC_ALPHA;
+  configInfo.colorBlendAttachment.dstColorBlendFactor =
+      VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+  configInfo.colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+  configInfo.colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+  configInfo.colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+  configInfo.colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+}
+
 }  // namespace lve
