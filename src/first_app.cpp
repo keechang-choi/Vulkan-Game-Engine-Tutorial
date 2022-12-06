@@ -127,8 +127,11 @@ void FirstApp::run() {
       // NOTE: separate frame and renderpass, since we need to control
       // multiple render passes.
       lveRenderer.beginSwapChainRenderPass(commandBuffer);
+
+      // order matters
       simpleRenderSystem.renderGameObjects(frameInfo);
       pointLightSystem.render(frameInfo);
+
       lveRenderer.endSwapChainRenderPass(commandBuffer);
       lveRenderer.endFrame();
     }
