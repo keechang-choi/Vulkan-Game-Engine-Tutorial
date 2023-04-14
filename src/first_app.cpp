@@ -14,6 +14,8 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 // std
 #include <array>
@@ -180,3 +182,16 @@ void FirstApp::loadGameObjects() {
 }
 
 }  // namespace lve
+
+namespace tut {
+void createTextureImage() {
+  int texWidth, texHeight, texChannels;
+  stbi_uc* pixels = stbi_load("textures/texture.jpg", &texWidth, &texHeight,
+                              &texChannels, STBI_rgb_alpha);
+  VkDeviceSize imageSize = texWidth * texHeight * 4;
+
+  if (!pixels) {
+    throw std::runtime_error("failed to load texture image!");
+  }
+}
+}  // namespace tut

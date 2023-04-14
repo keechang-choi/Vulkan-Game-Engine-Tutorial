@@ -13,6 +13,7 @@
 #include <cstring>
 #include <iostream>
 #include <string>
+#include <unordered_map>
 
 #ifndef ENGINE_DIR
 #define ENGINE_DIR "../"
@@ -193,8 +194,8 @@ void LveModel::Builder::loadModel(const std::string& filepath) {
             attrib.vertices[3 * index.vertex_index + 2],
         };
 
-        // attrib color 는  vertex와 크기 같게 채워져있고,
-        // color 없으면 1로 채워져 있음.
+        // attrib color size == vertex size,
+        // color empty => fill with 1.
         vertex.color = {
             attrib.colors[3 * index.vertex_index + 0],
             attrib.colors[3 * index.vertex_index + 1],

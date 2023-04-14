@@ -2,6 +2,8 @@
 
 #include "lve_buffer.hpp"
 #include "lve_device.hpp"
+#include "tut_texture.hpp"
+
 // libs
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -62,5 +64,7 @@ class LveModel {
   bool hasIndexBuffer = false;
   std::unique_ptr<LveBuffer> indexBuffer;
   uint32_t indexCount;
+
+  std::unique_ptr<tut::TutImage> textureImage;
 };
 }  // namespace lve
