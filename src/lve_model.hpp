@@ -36,6 +36,7 @@ class LveModel {
   struct Builder {
     std::vector<Vertex> vertices{};
     std::vector<uint32_t> indices{};
+    std::string texture_path;
 
     void loadModel(const std::string &filepath);
   };
@@ -47,7 +48,8 @@ class LveModel {
   LveModel &operator=(const LveModel &) = delete;
 
   static std::unique_ptr<LveModel> createModelFromFile(
-      LveDevice &device, const std::string &filepath);
+      LveDevice &device, const std::string &filepath,
+      const std::string &texture_path);
 
   void bind(VkCommandBuffer commandBuffer);
   void draw(VkCommandBuffer commandBuffer);
@@ -55,6 +57,7 @@ class LveModel {
  private:
   void createVertexBuffers(const std::vector<Vertex> &vertices);
   void createIndexBuffers(const std::vector<uint32_t> &indices);
+  void createTextureImage(const std::string &texture_path);
 
   LveDevice &lveDevice;
 

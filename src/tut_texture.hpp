@@ -12,6 +12,7 @@ class TutImage {
 
   TutImage(const TutImage&) = delete;
   TutImage& operator=(const TutImage&) = delete;
+  VkImage getImage() const { return image; }
 
  private:
   lve::LveDevice& lveDevice;

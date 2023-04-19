@@ -14,8 +14,6 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
 
 // std
 #include <array>
@@ -143,26 +141,36 @@ void FirstApp::run() {
 
 void FirstApp::loadGameObjects() {
   std::shared_ptr<LveModel> lveModel =
-      LveModel::createModelFromFile(lveDevice, "models/flat_vase.obj");
+      LveModel::createModelFromFile(lveDevice, "models/flat_vase.obj", "");
   auto flatVase = LveGameObject::createGameObject();
   flatVase.model = lveModel;
   flatVase.transform.translation = {.5f, .5f, 0.f};
   flatVase.transform.scale = {3.f, 1.5f, 3.f};
   gameObjects.emplace(flatVase.getId(), std::move(flatVase));
 
-  lveModel = LveModel::createModelFromFile(lveDevice, "models/smooth_vase.obj");
+  lveModel =
+      LveModel::createModelFromFile(lveDevice, "models/smooth_vase.obj", "");
   auto smoothVase = LveGameObject::createGameObject();
   smoothVase.model = lveModel;
   smoothVase.transform.translation = {-.5f, .5f, 0.f};
   smoothVase.transform.scale = {3.f, 1.5f, 3.f};
   gameObjects.emplace(smoothVase.getId(), std::move(smoothVase));
 
-  lveModel = LveModel::createModelFromFile(lveDevice, "models/quad.obj");
+  lveModel = LveModel::createModelFromFile(lveDevice, "models/quad.obj", "");
   auto floor = LveGameObject::createGameObject();
   floor.model = lveModel;
   floor.transform.translation = {0.f, .5f, 0.f};
   floor.transform.scale = {3.f, 1.f, 3.f};
   gameObjects.emplace(floor.getId(), std::move(floor));
+
+  lveModel = LveModel::createModelFromFile(lveDevice, "models/quad.obj",
+                                           "textures/statue-512.jpg");
+  auto wallWithTexture = LveGameObject::createGameObject();
+  wallWithTexture.model = lveModel;
+  wallWithTexture.transform.rotation = {glm::half_pi<float>(), 0.f, 0.f};
+  wallWithTexture.transform.translation = {0.f, .5f, 0.f};
+  wallWithTexture.transform.scale = {3.f, 1.f, 3.f};
+  gameObjects.emplace(wallWithTexture.getId(), std::move(wallWithTexture));
 
   std::vector<glm::vec3> lightColors{
       {1.f, .1f, .1f}, {.1f, .1f, 1.f}, {.1f, 1.f, .1f},
@@ -182,16 +190,3 @@ void FirstApp::loadGameObjects() {
 }
 
 }  // namespace lve
-
-namespace tut {
-void createTextureImage() {
-  int texWidth, texHeight, texChannels;
-  stbi_uc* pixels = stbi_load("textures/texture.jpg", &texWidth, &texHeight,
-                              &texChannels, STBI_rgb_alpha);
-  VkDeviceSize imageSize = texWidth * texHeight * 4;
-
-  if (!pixels) {
-    throw std::runtime_error("failed to load texture image!");
-  }
-}
-}  // namespace tut
