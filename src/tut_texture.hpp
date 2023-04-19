@@ -3,6 +3,9 @@
 #include <lve_device.hpp>
 
 namespace tut {
+VkImageView createImageView(lve::LveDevice& device, VkImage image,
+                            VkFormat format);
+
 class TutImage {
  public:
   TutImage(lve::LveDevice& device, uint32_t width, uint32_t height,

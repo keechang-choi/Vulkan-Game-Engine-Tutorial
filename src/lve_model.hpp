@@ -58,6 +58,7 @@ class LveModel {
   void createVertexBuffers(const std::vector<Vertex> &vertices);
   void createIndexBuffers(const std::vector<uint32_t> &indices);
   void createTextureImage(const std::string &texture_path);
+  void createTextureImageView();
 
   LveDevice &lveDevice;
 
@@ -69,5 +70,6 @@ class LveModel {
   uint32_t indexCount;
 
   std::unique_ptr<tut::TutImage> textureImage;
+  VkImageView textureImageView;
 };
 }  // namespace lve
