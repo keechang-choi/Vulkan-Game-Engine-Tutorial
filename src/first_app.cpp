@@ -74,7 +74,7 @@ void FirstApp::run() {
   camera.setViewTarget(glm::vec3{-1.f, -2.f, 2.f}, glm::vec3{0.f, 0.f, 2.5f});
 
   auto viewerObject = LveGameObject::createGameObject();
-  viewerObject.transform.translation.z = -2.5f;
+  viewerObject.transform.translation.z = -10.5f;
   KeyBoardMovementController cameraController{};
 
   auto currentTime = std::chrono::high_resolution_clock::now();
@@ -168,7 +168,7 @@ void FirstApp::loadGameObjects() {
   auto wallWithTexture = LveGameObject::createGameObject();
   wallWithTexture.model = lveModel;
   wallWithTexture.transform.rotation = {glm::half_pi<float>(), 0.f, 0.f};
-  wallWithTexture.transform.translation = {0.f, .5f, 0.f};
+  wallWithTexture.transform.translation = {6.f, .5f, 3.f};
   wallWithTexture.transform.scale = {3.f, 1.f, 3.f};
   gameObjects.emplace(wallWithTexture.getId(), std::move(wallWithTexture));
 

@@ -48,7 +48,11 @@ std::unique_ptr<LveModel> LveModel::createModelFromFile(
   LveModel::Builder builder{};
   builder.loadModel(ENGINE_DIR + filepath);
   // TODO: load image as unique_ptr?
-  builder.texture_path = ENGINE_DIR + texture_path;
+  if (texture_path.empty()) {
+    builder.texture_path = "";
+  } else {
+    builder.texture_path = ENGINE_DIR + texture_path;
+  }
   std::cout << "Vertex count: " << builder.vertices.size() << std::endl;
   return std::make_unique<LveModel>(device, builder);
 }
@@ -118,6 +122,7 @@ void LveModel::createTextureImage(const std::string& texture_path) {
     return;
   }
   int texWidth, texHeight, texChannels;
+  std::cout << texture_path << std::endl;
   stbi_uc* pixels = stbi_load(texture_path.c_str(), &texWidth, &texHeight,
                               &texChannels, STBI_rgb_alpha);
 
