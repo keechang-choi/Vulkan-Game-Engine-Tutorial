@@ -128,6 +128,9 @@ void LveDevice::pickPhysicalDevice() {
 
   vkGetPhysicalDeviceProperties(physicalDevice, &properties);
   std::cout << "physical device: " << properties.deviceName << std::endl;
+
+  std::cout << "maxAnisotropy : " << properties.limits.maxSamplerAnisotropy
+            << std::endl;
 }
 
 void LveDevice::createLogicalDevice() {
@@ -220,7 +223,11 @@ bool LveDevice::isDeviceSuitable(VkPhysicalDevice device) {
 
   VkPhysicalDeviceFeatures supportedFeatures;
   vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
-  std::cout << indices.isComplete() << extensionsSupported << swapChainAdequate
+  std::cout << "queue family indices isComplete :" << indices.isComplete()
+            << std::endl
+            << "extensionsSupported: " << extensionsSupported << std::endl
+            << "swapChainAdequate: " << swapChainAdequate << std::endl
+            << "supportedFeatures.samplerAnisotropy: "
             << supportedFeatures.samplerAnisotropy << std::endl;
 
   // not sure, in WSL can not use samplerAnisotropy. may be relevant to vGPU?

@@ -38,10 +38,14 @@ LveModel::LveModel(LveDevice& device, const LveModel::Builder& builder)
     : lveDevice{device} {
   createVertexBuffers(builder.vertices);
   createIndexBuffers(builder.indices);
+
   createTextureImage(builder.texture_path);
+  createTextureImageView();
 }
 LveModel ::~LveModel() {
-  vkDestroyImageView(lveDevice.device(), textureImageView, nullptr);
+  if (textureImageView != VK_NULL_HANDLE) {
+    vkDestroyImageView(lveDevice.device(), textureImageView, nullptr);
+  }
 }
 
 std::unique_ptr<LveModel> LveModel::createModelFromFile(
@@ -173,6 +177,9 @@ void LveModel::createTextureImage(const std::string& texture_path) {
 }
 
 void LveModel::createTextureImageView() {
+  if (textureImage == nullptr) {
+    return;
+  }
   textureImageView = tut::createImageView(lveDevice, textureImage->getImage(),
                                           VK_FORMAT_R8G8B8A8_SRGB);
 }

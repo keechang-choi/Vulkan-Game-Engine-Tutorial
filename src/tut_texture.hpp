@@ -23,4 +23,18 @@ class TutImage {
   VkDeviceMemory imageMemory = VK_NULL_HANDLE;
   void* mapped;
 };
+
+class TutTexture {
+ public:
+  TutTexture(lve::LveDevice& device);
+  ~TutTexture();
+
+  TutTexture(const TutImage&) = delete;
+  TutTexture& operator=(const TutTexture&) = delete;
+
+ private:
+  lve::LveDevice& lveDevice;
+  VkSampler textureSampler;
+  void createTextureSampler();
+};
 }  // namespace tut

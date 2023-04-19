@@ -70,6 +70,6 @@ class LveModel {
   uint32_t indexCount;
 
   std::unique_ptr<tut::TutImage> textureImage;
-  VkImageView textureImageView;
+  VkImageView textureImageView = VK_NULL_HANDLE;
 };
 }  // namespace lve
