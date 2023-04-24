@@ -69,8 +69,14 @@ void TutTexture::createTextureSampler() {
   samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
   samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
 
+  // NOTE: WSL vulkan support for gpu issue
+#ifdef _WIN32
   samplerInfo.anisotropyEnable = VK_TRUE;
   samplerInfo.maxAnisotropy = lveDevice.properties.limits.maxSamplerAnisotropy;
+#else
+  samplerInfo.anisotropyEnable = VK_FALSE;
+  samplerInfo.maxAnisotropy = 1.f;
+#endif
 
   samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
 

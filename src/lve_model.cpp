@@ -303,5 +303,4 @@ void LveModel::Builder::loadModel(const std::string& filepath) {
     }
   }
 }
-
 }  // namespace lve

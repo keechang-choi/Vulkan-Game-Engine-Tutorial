@@ -8,6 +8,7 @@
 #include "lve_model.hpp"
 #include "systems/point_light_system.hpp"
 #include "systems/simple_render_system.hpp"
+#include "tut_texture.hpp"
 
 // libs
 #define GLM_FORCE_RADIANS
@@ -25,13 +26,26 @@
 namespace lve {
 
 FirstApp::FirstApp() {
-  globalPool = LveDescriptorPool::Builder(lveDevice)
-                   .setMaxSets(LveSwapChain::MAX_FRAMES_IN_FLIGHT)
-                   .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                                LveSwapChain::MAX_FRAMES_IN_FLIGHT)
-                   .build();
+  globalPool =
+      LveDescriptorPool::Builder(lveDevice)
+          .setMaxSets(LveSwapChain::MAX_FRAMES_IN_FLIGHT + maxObjectNum)
+          .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                       LveSwapChain::MAX_FRAMES_IN_FLIGHT)
+          .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, maxObjectNum)
+          .build();
 
   loadGameObjects();
+  int texture_obj_num = 0;
+  for (const auto& kv : gameObjects) {
+    auto& obj = kv.second;
+    if (obj.model == nullptr) {
+      continue;
+    }
+    texture_obj_num++;
+  }
+  std::cout << texture_obj_num << " < " << maxObjectNum << std::endl;
+
+  assert(texture_obj_num < maxObjectNum);
 }
 FirstApp::~FirstApp() {}
 
@@ -50,6 +64,12 @@ void FirstApp::run() {
                              .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
                                          VK_SHADER_STAGE_ALL_GRAPHICS)
                              .build();
+  auto objectSetLayout =
+      LveDescriptorSetLayout::Builder(lveDevice)
+          .addBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                      VK_SHADER_STAGE_FRAGMENT_BIT)
+          .build();
+
   std::vector<VkDescriptorSet> globalDescriptorSets(
       LveSwapChain::MAX_FRAMES_IN_FLIGHT);
   for (int i = 0; i < globalDescriptorSets.size(); i++) {
@@ -59,10 +79,32 @@ void FirstApp::run() {
         .build(globalDescriptorSets[i]);
   }
 
+  tut::TutTexture tutTexture{lveDevice};
+
+  for (auto& kv : gameObjects) {
+    auto& obj = kv.second;
+    // TODO: system - entity sepration
+    // to skip for objects w/o model(point lights)
+    if (obj.model == nullptr) continue;
+    auto& model = obj.model;
+    if (model->textureDescriptorSet != VK_NULL_HANDLE) {
+      continue;
+    }
+
+    VkDescriptorImageInfo imageInfo{};
+    imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    imageInfo.imageView = model->getTextureImageView();
+    imageInfo.sampler = tutTexture.getTextureSampler();
+    LveDescriptorWriter(*objectSetLayout, *globalPool)
+        .writeImage(0, &imageInfo)
+        .build(model->textureDescriptorSet);
+  }
+
   SimpleRenderSystem simpleRenderSystem{
       lveDevice,
       lveRenderer.getSwapChainRenderPass(),
       globalSetLayout->getDescriptorSetLayout(),
+      objectSetLayout->getDescriptorSetLayout(),
   };
   PointLightSystem pointLightSystem{
       lveDevice,
@@ -140,23 +182,24 @@ void FirstApp::run() {
 }
 
 void FirstApp::loadGameObjects() {
-  std::shared_ptr<LveModel> lveModel =
-      LveModel::createModelFromFile(lveDevice, "models/flat_vase.obj", "");
+  std::shared_ptr<LveModel> lveModel = LveModel::createModelFromFile(
+      lveDevice, "models/flat_vase.obj", "textures/statue-512.jpg");
   auto flatVase = LveGameObject::createGameObject();
   flatVase.model = lveModel;
   flatVase.transform.translation = {.5f, .5f, 0.f};
   flatVase.transform.scale = {3.f, 1.5f, 3.f};
   gameObjects.emplace(flatVase.getId(), std::move(flatVase));
 
-  lveModel =
-      LveModel::createModelFromFile(lveDevice, "models/smooth_vase.obj", "");
+  lveModel = LveModel::createModelFromFile(lveDevice, "models/smooth_vase.obj",
+                                           "textures/statue-512.jpg");
   auto smoothVase = LveGameObject::createGameObject();
   smoothVase.model = lveModel;
   smoothVase.transform.translation = {-.5f, .5f, 0.f};
   smoothVase.transform.scale = {3.f, 1.5f, 3.f};
   gameObjects.emplace(smoothVase.getId(), std::move(smoothVase));
 
-  lveModel = LveModel::createModelFromFile(lveDevice, "models/quad.obj", "");
+  lveModel = LveModel::createModelFromFile(lveDevice, "models/quad.obj",
+                                           "textures/statue-512.jpg");
   auto floor = LveGameObject::createGameObject();
   floor.model = lveModel;
   floor.transform.translation = {0.f, .5f, 0.f};

@@ -32,6 +32,8 @@ class TutTexture {
   TutTexture(const TutImage&) = delete;
   TutTexture& operator=(const TutTexture&) = delete;
 
+  VkSampler getTextureSampler() { return textureSampler; }
+
  private:
   lve::LveDevice& lveDevice;
   VkSampler textureSampler;

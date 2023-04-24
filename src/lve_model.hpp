@@ -54,6 +54,9 @@ class LveModel {
   void bind(VkCommandBuffer commandBuffer);
   void draw(VkCommandBuffer commandBuffer);
 
+  VkImageView getTextureImageView() { return textureImageView; }
+  VkDescriptorSet textureDescriptorSet = VK_NULL_HANDLE;
+
  private:
   void createVertexBuffers(const std::vector<Vertex> &vertices);
   void createIndexBuffers(const std::vector<uint32_t> &indices);
