@@ -183,7 +183,7 @@ void FirstApp::run() {
 
 void FirstApp::loadGameObjects() {
   std::shared_ptr<LveModel> lveModel = LveModel::createModelFromFile(
-      lveDevice, "models/flat_vase.obj", "textures/statue-512.jpg");
+      lveDevice, "models/flat_vase.obj", "textures/gray-1.jpg");
   auto flatVase = LveGameObject::createGameObject();
   flatVase.model = lveModel;
   flatVase.transform.translation = {.5f, .5f, 0.f};
@@ -191,7 +191,7 @@ void FirstApp::loadGameObjects() {
   gameObjects.emplace(flatVase.getId(), std::move(flatVase));
 
   lveModel = LveModel::createModelFromFile(lveDevice, "models/smooth_vase.obj",
-                                           "textures/statue-512.jpg");
+                                           "textures/gray-1.jpg");
   auto smoothVase = LveGameObject::createGameObject();
   smoothVase.model = lveModel;
   smoothVase.transform.translation = {-.5f, .5f, 0.f};
@@ -199,19 +199,23 @@ void FirstApp::loadGameObjects() {
   gameObjects.emplace(smoothVase.getId(), std::move(smoothVase));
 
   lveModel = LveModel::createModelFromFile(lveDevice, "models/quad.obj",
-                                           "textures/statue-512.jpg");
+                                           "textures/gray-1.jpg");
   auto floor = LveGameObject::createGameObject();
   floor.model = lveModel;
   floor.transform.translation = {0.f, .5f, 0.f};
-  floor.transform.scale = {3.f, 1.f, 3.f};
+  floor.transform.scale = {9.f, 1.f, 3.f};
   gameObjects.emplace(floor.getId(), std::move(floor));
 
   lveModel = LveModel::createModelFromFile(lveDevice, "models/quad.obj",
                                            "textures/statue-512.jpg");
   auto wallWithTexture = LveGameObject::createGameObject();
   wallWithTexture.model = lveModel;
-  wallWithTexture.transform.rotation = {glm::half_pi<float>(), 0.f, 0.f};
-  wallWithTexture.transform.translation = {6.f, .5f, 3.f};
+  wallWithTexture.transform.rotation = {
+      0.f,
+      glm::half_pi<float>(),
+      glm::half_pi<float>(),
+  };
+  wallWithTexture.transform.translation = {0.f, -2.5f, 3.f};
   wallWithTexture.transform.scale = {3.f, 1.f, 3.f};
   gameObjects.emplace(wallWithTexture.getId(), std::move(wallWithTexture));
 
