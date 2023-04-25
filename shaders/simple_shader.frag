@@ -58,7 +58,7 @@ void main() {
     specularLight += intensity * blinnTerm;
   }
   
-  vec3 texColor = texture(texSampler, fragTexCoord * 3.0).rgb;
+  vec3 texColor = texture(texSampler, fragTexCoord * 1.0).rgb;
   outColor = vec4(diffuseLight * texColor + specularLight * texColor, 1.0);
   
 }

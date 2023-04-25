@@ -219,6 +219,19 @@ void FirstApp::loadGameObjects() {
   wallWithTexture.transform.scale = {3.f, 1.f, 3.f};
   gameObjects.emplace(wallWithTexture.getId(), std::move(wallWithTexture));
 
+  // lveModel = LveModel::createModelFromFile(
+  //     lveDevice, "models/food_apple_01_4k.obj", "textures/gray-1.jpg");
+  // auto apple = LveGameObject::createGameObject();
+  // apple.model = lveModel;
+  // apple.transform.translation = {1.5f, .5f, 0.f};
+  // apple.transform.rotation = {
+  //     glm::half_pi<float>(),
+  //     0.f,
+  //     0.f,
+  // };
+  // apple.transform.scale = {10.f, 10.f, 10.f};
+  // gameObjects.emplace(apple.getId(), std::move(apple));
+
   std::vector<glm::vec3> lightColors{
       {1.f, .1f, .1f}, {.1f, .1f, 1.f}, {.1f, 1.f, .1f},
       {1.f, 1.f, .1f}, {.1f, 1.f, 1.f}, {1.f, 1.f, 1.f}  //
