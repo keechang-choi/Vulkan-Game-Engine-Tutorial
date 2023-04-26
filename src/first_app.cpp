@@ -216,21 +216,22 @@ void FirstApp::loadGameObjects() {
       glm::half_pi<float>(),
   };
   wallWithTexture.transform.translation = {0.f, -2.5f, 3.f};
-  wallWithTexture.transform.scale = {3.f, 1.f, 3.f};
+  wallWithTexture.transform.scale = {-3.f, 1.f, 3.f};
   gameObjects.emplace(wallWithTexture.getId(), std::move(wallWithTexture));
 
-  // lveModel = LveModel::createModelFromFile(
-  //     lveDevice, "models/food_apple_01_4k.obj", "textures/gray-1.jpg");
-  // auto apple = LveGameObject::createGameObject();
-  // apple.model = lveModel;
-  // apple.transform.translation = {1.5f, .5f, 0.f};
+  lveModel = LveModel::createModelFromFile(
+      lveDevice, "models/food_apple_01_4k.obj", "textures/food_apple_01_diff_4k_blender.jpg");
+  //"textures/gray-1.jpg"
+  auto apple = LveGameObject::createGameObject();
+  apple.model = lveModel;
+  apple.transform.translation = {1.5f, 0.5f, 0.f};
   // apple.transform.rotation = {
-  //     glm::half_pi<float>(),
+  //     glm::pi<float>(),
   //     0.f,
   //     0.f,
   // };
-  // apple.transform.scale = {10.f, 10.f, 10.f};
-  // gameObjects.emplace(apple.getId(), std::move(apple));
+  apple.transform.scale = {15.f, 15.f, 15.f};
+  gameObjects.emplace(apple.getId(), std::move(apple));
 
   std::vector<glm::vec3> lightColors{
       {1.f, .1f, .1f}, {.1f, .1f, 1.f}, {.1f, 1.f, .1f},
@@ -238,7 +239,7 @@ void FirstApp::loadGameObjects() {
   };
   // NOTE: move 된 unique_ptr은 brace 안으로 넣어서 더이상 접근 못하게 명시.
   for (int i = 0; i < lightColors.size(); i++) {
-    auto pointLight = LveGameObject::makePointLight(0.2f, 0.2f);
+    auto pointLight = LveGameObject::makePointLight(2.f, 0.2f);
     pointLight.color = lightColors[i];
     auto rotateLight = glm::rotate(
         glm::mat4(1.f), (i * glm::two_pi<float>() / lightColors.size()),
