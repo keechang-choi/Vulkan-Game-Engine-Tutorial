@@ -7,12 +7,15 @@
 #include <tiny_obj_loader.h>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 // std
 #include <cassert>
 #include <cstring>
 #include <iostream>
 #include <string>
+#include <unordered_map>
 
 #ifndef ENGINE_DIR
 #define ENGINE_DIR "../"
@@ -35,13 +38,27 @@ LveModel::LveModel(LveDevice& device, const LveModel::Builder& builder)
     : lveDevice{device} {
   createVertexBuffers(builder.vertices);
   createIndexBuffers(builder.indices);
+
+  createTextureImage(builder.texture_path);
+  createTextureImageView();
 }
-LveModel ::~LveModel() {}
+LveModel ::~LveModel() {
+  if (textureImageView != VK_NULL_HANDLE) {
+    vkDestroyImageView(lveDevice.device(), textureImageView, nullptr);
+  }
+}
 
 std::unique_ptr<LveModel> LveModel::createModelFromFile(
-    LveDevice& device, const std::string& filepath) {
+    LveDevice& device, const std::string& filepath,
+    const std::string& texture_path) {
   LveModel::Builder builder{};
   builder.loadModel(ENGINE_DIR + filepath);
+  // TODO: load image as unique_ptr?
+  if (texture_path.empty()) {
+    builder.texture_path = "";
+  } else {
+    builder.texture_path = ENGINE_DIR + texture_path;
+  }
   std::cout << "Vertex count: " << builder.vertices.size() << std::endl;
   return std::make_unique<LveModel>(device, builder);
 }
@@ -104,6 +121,67 @@ void LveModel::createIndexBuffers(const std::vector<uint32_t>& indices) {
 
   lveDevice.copyBuffer(stagingBuffer.getBuffer(), indexBuffer->getBuffer(),
                        bufferSize);
+}
+
+void LveModel::createTextureImage(const std::string& texture_path) {
+  if (texture_path.empty()) {
+    return;
+  }
+  int texWidth, texHeight, texChannels;
+  std::cout << texture_path << std::endl;
+  stbi_uc* pixels = stbi_load(texture_path.c_str(), &texWidth, &texHeight,
+                              &texChannels, STBI_rgb_alpha);
+
+  if (!pixels) {
+    std::cout << "reason: " << stbi_failure_reason() << std::endl;
+    throw std::runtime_error("failed to load texture image!");
+  }
+  uint32_t pixelCount = texWidth * texHeight;
+  VkDeviceSize imageSize = 4 * indexCount;
+  uint32_t pixelSize = 4;
+
+  LveBuffer stagingBuffer{
+      lveDevice,
+      pixelSize,
+      pixelCount,
+      VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+          VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+  };
+
+  stagingBuffer.map();
+  stagingBuffer.writeToBuffer((void*)pixels);
+
+  stbi_image_free(pixels);
+
+  textureImage = std::make_unique<tut::TutImage>(
+      lveDevice, texWidth, texHeight, VK_FORMAT_R8G8B8A8_SRGB,
+      VK_IMAGE_TILING_OPTIMAL,
+      VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+  // layout transition
+  lveDevice.transitionImageLayout(
+      textureImage->getImage(), VK_FORMAT_R8G8B8A8_SRGB,
+      VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+  // copy
+  lveDevice.copyBufferToImage(
+      stagingBuffer.getBuffer(), textureImage->getImage(),
+      static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), 1);
+
+  lveDevice.transitionImageLayout(textureImage->getImage(),
+                                  VK_FORMAT_R8G8B8A8_SRGB,
+                                  VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                                  VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+}
+
+void LveModel::createTextureImageView() {
+  if (textureImage == nullptr) {
+    return;
+  }
+  textureImageView = tut::createImageView(lveDevice, textureImage->getImage(),
+                                          VK_FORMAT_R8G8B8A8_SRGB);
 }
 
 void LveModel::bind(VkCommandBuffer commandBuffer) {
@@ -193,8 +271,8 @@ void LveModel::Builder::loadModel(const std::string& filepath) {
             attrib.vertices[3 * index.vertex_index + 2],
         };
 
-        // attrib color 는  vertex와 크기 같게 채워져있고,
-        // color 없으면 1로 채워져 있음.
+        // attrib color size == vertex size,
+        // color empty => fill with 1.
         vertex.color = {
             attrib.colors[3 * index.vertex_index + 0],
             attrib.colors[3 * index.vertex_index + 1],
@@ -213,7 +291,7 @@ void LveModel::Builder::loadModel(const std::string& filepath) {
       if (index.texcoord_index >= 0) {
         vertex.uv = {
             attrib.texcoords[2 * index.texcoord_index + 0],
-            attrib.texcoords[2 * index.texcoord_index + 1],
+            1.0f - attrib.texcoords[2 * index.texcoord_index + 1],
         };
       }
 
@@ -225,5 +303,4 @@ void LveModel::Builder::loadModel(const std::string& filepath) {
     }
   }
 }
-
 }  // namespace lve

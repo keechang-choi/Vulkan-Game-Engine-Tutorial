@@ -2,6 +2,8 @@
 
 #include "lve_buffer.hpp"
 #include "lve_device.hpp"
+#include "tut_texture.hpp"
+
 // libs
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -34,6 +36,7 @@ class LveModel {
   struct Builder {
     std::vector<Vertex> vertices{};
     std::vector<uint32_t> indices{};
+    std::string texture_path;
 
     void loadModel(const std::string &filepath);
   };
@@ -45,14 +48,20 @@ class LveModel {
   LveModel &operator=(const LveModel &) = delete;
 
   static std::unique_ptr<LveModel> createModelFromFile(
-      LveDevice &device, const std::string &filepath);
+      LveDevice &device, const std::string &filepath,
+      const std::string &texture_path);
 
   void bind(VkCommandBuffer commandBuffer);
   void draw(VkCommandBuffer commandBuffer);
 
+  VkImageView getTextureImageView() { return textureImageView; }
+  VkDescriptorSet textureDescriptorSet = VK_NULL_HANDLE;
+
  private:
   void createVertexBuffers(const std::vector<Vertex> &vertices);
   void createIndexBuffers(const std::vector<uint32_t> &indices);
+  void createTextureImage(const std::string &texture_path);
+  void createTextureImageView();
 
   LveDevice &lveDevice;
 
@@ -62,5 +71,8 @@ class LveModel {
   bool hasIndexBuffer = false;
   std::unique_ptr<LveBuffer> indexBuffer;
   uint32_t indexCount;
+
+  std::unique_ptr<tut::TutImage> textureImage;
+  VkImageView textureImageView = VK_NULL_HANDLE;
 };
 }  // namespace lve

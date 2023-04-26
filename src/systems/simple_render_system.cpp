@@ -24,9 +24,10 @@ namespace lve {
 
 SimpleRenderSystem::SimpleRenderSystem(LveDevice& device,
                                        VkRenderPass renderPass,
-                                       VkDescriptorSetLayout globalSetLayout)
+                                       VkDescriptorSetLayout globalSetLayout,
+                                       VkDescriptorSetLayout objectSetLayout)
     : lveDevice{device} {
-  createPipelineLayout(globalSetLayout);
+  createPipelineLayout(globalSetLayout, objectSetLayout);
   createPipeline(renderPass);
 }
 SimpleRenderSystem::~SimpleRenderSystem() {
@@ -34,7 +35,8 @@ SimpleRenderSystem::~SimpleRenderSystem() {
 }
 
 void SimpleRenderSystem::createPipelineLayout(
-    VkDescriptorSetLayout globalSetLayout) {
+    VkDescriptorSetLayout globalSetLayout,
+    VkDescriptorSetLayout objectSetLayout) {
   VkPushConstantRange pushConstantRange{};
   pushConstantRange.stageFlags =
       VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
@@ -42,7 +44,8 @@ void SimpleRenderSystem::createPipelineLayout(
   pushConstantRange.size = sizeof(SimplePushConstantData);
 
   // only one for now.
-  std::vector<VkDescriptorSetLayout> descriptorSetLayouts{globalSetLayout};
+  std::vector<VkDescriptorSetLayout> descriptorSetLayouts{globalSetLayout,
+                                                          objectSetLayout};
 
   VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
   pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -93,7 +96,6 @@ void SimpleRenderSystem::renderGameObjects(FrameInfo& frameInfo) {
     auto& obj = kv.second;
     if (obj.model == nullptr) continue;
     SimplePushConstantData push{};
-
     push.modelMatrix = obj.transform.mat4();
     push.normalMatrix = obj.transform.normalMatrix();
 
@@ -101,6 +103,10 @@ void SimpleRenderSystem::renderGameObjects(FrameInfo& frameInfo) {
         frameInfo.commandBuffer, pipelineLayout,
         VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
         sizeof(SimplePushConstantData), &push);
+
+    vkCmdBindDescriptorSets(frameInfo.commandBuffer,
+                            VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1,
+                            1, &obj.model->textureDescriptorSet, 0, nullptr);
     obj.model->bind(frameInfo.commandBuffer);
     obj.model->draw(frameInfo.commandBuffer);
   }

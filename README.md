@@ -183,3 +183,8 @@ all the base codes and materials from
     - sorting semi-transparents object in rendering
   - ![vulkan-tut27](https://user-images.githubusercontent.com/49244613/205864135-b482708f-81c9-4b2c-beca-11991455516f.gif)
 
+- Tutorial Texture mapping
+  - covered:
+    - image, imageView, texture sampler
+    - texture resource descriptor set per object
+  - ![vulkan-tutorial-texture-2](https://user-images.githubusercontent.com/49244613/234461717-f75fd7c5-2cba-4356-a569-935b57069a85.gif)
