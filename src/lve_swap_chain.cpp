@@ -323,6 +323,10 @@ void LveSwapChain::createDepthResources() {
 
     depthImageViews[i] = device.createImageView(depthImages[i], depthFormat,
                                                 VK_IMAGE_ASPECT_DEPTH_BIT);
+
+    device.transitionImageLayout(
+        depthImages[i], depthFormat, VK_IMAGE_LAYOUT_UNDEFINED,
+        VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
   }
 }
 

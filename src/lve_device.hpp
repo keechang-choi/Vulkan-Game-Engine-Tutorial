@@ -95,6 +95,7 @@ class LveDevice {
   void hasGflwRequiredInstanceExtensions();
   bool checkDeviceExtensionSupport(VkPhysicalDevice device);
   SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+  bool hasStencilComponent(VkFormat format);
 
   VkInstance instance;
   VkDebugUtilsMessengerEXT debugMessenger;

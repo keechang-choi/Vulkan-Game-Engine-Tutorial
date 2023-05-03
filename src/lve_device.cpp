@@ -549,6 +549,16 @@ void LveDevice::transitionImageLayout(VkImage image, VkFormat format,
 
     sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
     destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+  } else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED &&
+             newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
+    // extra code
+    // since renderpass automatically takes depth image layout transition
+    barrier.srcAccessMask = 0;
+    barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT |
+                            VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+
+    sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+    destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
   } else {
     throw std::invalid_argument("unsupported layout transition!");
   }
@@ -629,6 +639,11 @@ VkImageView LveDevice::createImageView(VkImage image, VkFormat format,
   }
 
   return imageView;
+}
+
+bool LveDevice::hasStencilComponent(VkFormat format) {
+  return format == VK_FORMAT_D32_SFLOAT_S8_UINT ||
+         format == VK_FORMAT_D24_UNORM_S8_UINT;
 }
 
 }  // namespace lve
