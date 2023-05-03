@@ -180,8 +180,9 @@ void LveModel::createTextureImageView() {
   if (textureImage == nullptr) {
     return;
   }
-  textureImageView = tut::createImageView(lveDevice, textureImage->getImage(),
-                                          VK_FORMAT_R8G8B8A8_SRGB);
+  textureImageView = lveDevice.createImageView(textureImage->getImage(),
+                                               VK_FORMAT_R8G8B8A8_SRGB,
+                                               VK_IMAGE_ASPECT_COLOR_BIT);
 }
 
 void LveModel::bind(VkCommandBuffer commandBuffer) {
