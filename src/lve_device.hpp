@@ -72,6 +72,8 @@ class LveDevice {
   void createImageWithInfo(const VkImageCreateInfo &imageInfo,
                            VkMemoryPropertyFlags properties, VkImage &image,
                            VkDeviceMemory &imageMemory);
+  VkImageView createImageView(VkImage image, VkFormat format,
+                              VkImageAspectFlags aspectFlags);
 
   VkPhysicalDeviceProperties properties;
 
@@ -93,6 +95,7 @@ class LveDevice {
   void hasGflwRequiredInstanceExtensions();
   bool checkDeviceExtensionSupport(VkPhysicalDevice device);
   SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+  bool hasStencilComponent(VkFormat format);
 
   VkInstance instance;
   VkDebugUtilsMessengerEXT debugMessenger;
