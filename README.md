@@ -188,3 +188,13 @@ all the base codes and materials from
     - image, imageView, texture sampler
     - texture resource descriptor set per object
   - ![vulkan-tutorial-texture-2](https://user-images.githubusercontent.com/49244613/234461717-f75fd7c5-2cba-4356-a569-935b57069a85.gif)
+- Tutorial Depth buffering
+  - covered: 
+    - depth image, render pass update
+  - ![image](https://github.com/keechang-choi/Vulkan-Game-Engine-Tutorial/assets/49244613/e000c2d0-d91a-42b4-96c9-ed898bef7b60)
+- Tutorial Loding models
+  - covered: 
+    - textured model loading, vertex deduplication
+  - refacotoring: point light rotation system
+  - ![image](https://github.com/keechang-choi/Vulkan-Game-Engine-Tutorial/assets/49244613/d345443d-150d-4904-b899-dbaa61ec75cf)
+
