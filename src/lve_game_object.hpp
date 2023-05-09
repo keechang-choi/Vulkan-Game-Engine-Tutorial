@@ -30,6 +30,9 @@ struct TransformComponent {
 
 struct PointLightComponent {
   float lightIntensity = 1.0f;
+  glm::vec3 rotationCenter{};
+  float rotationRadius = 0.0f;
+  float angle = 0.0f;
 };
 
 class LveGameObject {
@@ -44,6 +47,9 @@ class LveGameObject {
 
   static LveGameObject makePointLight(float intensity = 10.0f,
                                       float radius = 0.1f,
+                                      glm::vec3 rotationCenter = glm::vec3(0.f),
+                                      float rotationRadius = 0.0f,
+                                      float angle = 0.0f,
                                       glm::vec3 color = glm::vec3(1.f));
 
   LveGameObject(const LveGameObject &) = delete;

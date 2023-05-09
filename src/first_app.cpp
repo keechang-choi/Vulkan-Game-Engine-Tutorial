@@ -208,8 +208,8 @@ void FirstApp::loadGameObjects() {
         lveDevice, "models/quad.obj", "textures/gray-1.jpg");
     auto floor = LveGameObject::createGameObject();
     floor.model = lveModel;
-    floor.transform.translation = {3.f, .5f, 0.f};
-    floor.transform.scale = {6.f, 1.f, 3.f};
+    floor.transform.translation = {0.f, .5f, 0.f};
+    floor.transform.scale = {3.f, 1.f, 3.f};
     gameObjects.emplace(floor.getId(), std::move(floor));
   }
 
@@ -266,17 +266,19 @@ void FirstApp::loadGameObjects() {
   };
   // NOTE: move 된 unique_ptr은 brace 안으로 넣어서 더이상 접근 못하게 명시.
   for (int i = 0; i < lightColors.size(); i++) {
-    auto pointLight = LveGameObject::makePointLight(2.f, 0.2f);
-    pointLight.color = lightColors[i];
-    auto rotateLight = glm::rotate(
-        glm::mat4(1.f), (i * glm::two_pi<float>() / lightColors.size()),
-        {0.f, -1.f, 0.f});
-    pointLight.transform.translation =
-        glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
+    float angle = (i * glm::two_pi<float>() / lightColors.size());
+    auto pointLight = LveGameObject::makePointLight(
+        2.f, 0.2f, {0.f, -1.f, -1.f}, 1.0f, angle, lightColors[i]);
+
     gameObjects.emplace(pointLight.getId(), std::move(pointLight));
   }
   {
     // fixed point light
+    auto pointLight =
+        LveGameObject::makePointLight(3.f, 0.2f, {-6.0f, -1.f, -1.f}, 1.0f);
+    pointLight.color = {1.0f, 0.5, 0.0f};
+
+    gameObjects.emplace(pointLight.getId(), std::move(pointLight));
   }
 }
 

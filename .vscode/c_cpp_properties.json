@@ -3,7 +3,10 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "C:/Program Files/Microsoft Visual Studio/2022/Community/Libraries/glm",
+                "C:/Program Files/Microsoft Visual Studio/2022/Community/Libraries/glfw-3.3.8",
+                "C:/VulkanSDK/1.3.216.0"
             ],
             "defines": [
                 "_DEBUG",
