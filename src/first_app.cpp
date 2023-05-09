@@ -36,14 +36,15 @@ FirstApp::FirstApp() {
 
   loadGameObjects();
   int texture_obj_num = 0;
-  for (const auto& kv : gameObjects) {
-    auto& obj = kv.second;
+  for (const auto &kv : gameObjects) {
+    auto &obj = kv.second;
     if (obj.model == nullptr) {
       continue;
     }
     texture_obj_num++;
   }
-  std::cout << texture_obj_num << " < " << maxObjectNum << std::endl;
+  std::cout << "object num: " << texture_obj_num << " < " << maxObjectNum
+            << std::endl;
 
   assert(texture_obj_num < maxObjectNum);
 }
@@ -81,12 +82,12 @@ void FirstApp::run() {
 
   tut::TutTexture tutTexture{lveDevice};
 
-  for (auto& kv : gameObjects) {
-    auto& obj = kv.second;
+  for (auto &kv : gameObjects) {
+    auto &obj = kv.second;
     // TODO: system - entity sepration
     // to skip for objects w/o model(point lights)
     if (obj.model == nullptr) continue;
-    auto& model = obj.model;
+    auto &model = obj.model;
     if (model->textureDescriptorSet != VK_NULL_HANDLE) {
       continue;
     }
@@ -182,56 +183,82 @@ void FirstApp::run() {
 }
 
 void FirstApp::loadGameObjects() {
-  std::shared_ptr<LveModel> lveModel = LveModel::createModelFromFile(
-      lveDevice, "models/flat_vase.obj", "textures/gray-1.jpg");
-  auto flatVase = LveGameObject::createGameObject();
-  flatVase.model = lveModel;
-  flatVase.transform.translation = {.5f, .5f, 0.f};
-  flatVase.transform.scale = {3.f, 1.5f, 3.f};
-  gameObjects.emplace(flatVase.getId(), std::move(flatVase));
+  {
+    std::shared_ptr<LveModel> lveModel = LveModel::createModelFromFile(
+        lveDevice, "models/flat_vase.obj", "textures/gray-1.jpg");
+    auto flatVase = LveGameObject::createGameObject();
+    flatVase.model = lveModel;
+    flatVase.transform.translation = {.5f, .5f, 0.f};
+    flatVase.transform.scale = {3.f, 1.5f, 3.f};
+    gameObjects.emplace(flatVase.getId(), std::move(flatVase));
+  }
 
-  lveModel = LveModel::createModelFromFile(lveDevice, "models/smooth_vase.obj",
-                                           "textures/gray-1.jpg");
-  auto smoothVase = LveGameObject::createGameObject();
-  smoothVase.model = lveModel;
-  smoothVase.transform.translation = {-.5f, .5f, 0.f};
-  smoothVase.transform.scale = {3.f, 1.5f, 3.f};
-  gameObjects.emplace(smoothVase.getId(), std::move(smoothVase));
+  {
+    std::shared_ptr<LveModel> lveModel = LveModel::createModelFromFile(
+        lveDevice, "models/smooth_vase.obj", "textures/gray-1.jpg");
+    auto smoothVase = LveGameObject::createGameObject();
+    smoothVase.model = lveModel;
+    smoothVase.transform.translation = {-.5f, .5f, 0.f};
+    smoothVase.transform.scale = {3.f, 1.5f, 3.f};
+    gameObjects.emplace(smoothVase.getId(), std::move(smoothVase));
+  }
 
-  lveModel = LveModel::createModelFromFile(lveDevice, "models/quad.obj",
-                                           "textures/gray-1.jpg");
-  auto floor = LveGameObject::createGameObject();
-  floor.model = lveModel;
-  floor.transform.translation = {0.f, .5f, 0.f};
-  floor.transform.scale = {9.f, 1.f, 3.f};
-  gameObjects.emplace(floor.getId(), std::move(floor));
+  {
+    std::shared_ptr<LveModel> lveModel = LveModel::createModelFromFile(
+        lveDevice, "models/quad.obj", "textures/gray-1.jpg");
+    auto floor = LveGameObject::createGameObject();
+    floor.model = lveModel;
+    floor.transform.translation = {0.f, .5f, 0.f};
+    floor.transform.scale = {3.f, 1.f, 3.f};
+    gameObjects.emplace(floor.getId(), std::move(floor));
+  }
 
-  lveModel = LveModel::createModelFromFile(lveDevice, "models/quad.obj",
-                                           "textures/statue-512.jpg");
-  auto wallWithTexture = LveGameObject::createGameObject();
-  wallWithTexture.model = lveModel;
-  wallWithTexture.transform.rotation = {
-      0.f,
-      glm::half_pi<float>(),
-      glm::half_pi<float>(),
-  };
-  wallWithTexture.transform.translation = {0.f, -2.5f, 3.f};
-  wallWithTexture.transform.scale = {-3.f, 1.f, 3.f};
-  gameObjects.emplace(wallWithTexture.getId(), std::move(wallWithTexture));
+  {
+    std::shared_ptr<LveModel> lveModel = LveModel::createModelFromFile(
+        lveDevice, "models/quad.obj", "textures/statue-512.jpg");
+    auto wallWithTexture = LveGameObject::createGameObject();
+    wallWithTexture.model = lveModel;
+    wallWithTexture.transform.rotation = {
+        0.f,
+        glm::half_pi<float>(),
+        glm::half_pi<float>(),
+    };
+    wallWithTexture.transform.translation = {0.f, -2.5f, 3.f};
+    wallWithTexture.transform.scale = {-3.f, 1.f, 3.f};
+    gameObjects.emplace(wallWithTexture.getId(), std::move(wallWithTexture));
+  }
 
-  lveModel = LveModel::createModelFromFile(
-      lveDevice, "models/food_apple_01_4k.obj", "textures/food_apple_01_diff_4k_blender.jpg");
-  //"textures/gray-1.jpg"
-  auto apple = LveGameObject::createGameObject();
-  apple.model = lveModel;
-  apple.transform.translation = {1.5f, 0.5f, 0.f};
-  // apple.transform.rotation = {
-  //     glm::pi<float>(),
-  //     0.f,
-  //     0.f,
-  // };
-  apple.transform.scale = {15.f, 15.f, 15.f};
-  gameObjects.emplace(apple.getId(), std::move(apple));
+  {
+    std::shared_ptr<LveModel> lveModel = LveModel::createModelFromFile(
+        lveDevice, "models/food_apple_01_4k.obj",
+        "textures/food_apple_01_diff_4k_blender.jpg");
+    //"textures/gray-1.jpg"
+    auto apple = LveGameObject::createGameObject();
+    apple.model = lveModel;
+    apple.transform.translation = {1.5f, 0.5f, 0.f};
+    // apple.transform.rotation = {
+    //     glm::pi<float>(),
+    //     0.f,
+    //     0.f,
+    // };
+    apple.transform.scale = {15.f, 15.f, 15.f};
+    gameObjects.emplace(apple.getId(), std::move(apple));
+  }
+
+  {
+    std::shared_ptr<LveModel> lveModel = LveModel::createModelFromFile(
+        lveDevice, "models/viking_room.obj", "textures/viking_room.png");
+    auto viking_room = LveGameObject::createGameObject();
+    viking_room.model = lveModel;
+    viking_room.transform.translation = {-6.0f, 0.5f, 0.f};
+    viking_room.transform.rotation = {
+        glm::half_pi<float>(),
+        glm::half_pi<float>(),
+        0.f,
+    };
+    viking_room.transform.scale = {3.0f, 3.0f, 3.0f};
+    gameObjects.emplace(viking_room.getId(), std::move(viking_room));
+  }
 
   std::vector<glm::vec3> lightColors{
       {1.f, .1f, .1f}, {.1f, .1f, 1.f}, {.1f, 1.f, .1f},
@@ -239,13 +266,18 @@ void FirstApp::loadGameObjects() {
   };
   // NOTE: move 된 unique_ptr은 brace 안으로 넣어서 더이상 접근 못하게 명시.
   for (int i = 0; i < lightColors.size(); i++) {
-    auto pointLight = LveGameObject::makePointLight(2.f, 0.2f);
-    pointLight.color = lightColors[i];
-    auto rotateLight = glm::rotate(
-        glm::mat4(1.f), (i * glm::two_pi<float>() / lightColors.size()),
-        {0.f, -1.f, 0.f});
-    pointLight.transform.translation =
-        glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
+    float angle = (i * glm::two_pi<float>() / lightColors.size());
+    auto pointLight = LveGameObject::makePointLight(
+        2.f, 0.2f, {0.f, -1.f, -1.f}, 1.0f, angle, lightColors[i]);
+
+    gameObjects.emplace(pointLight.getId(), std::move(pointLight));
+  }
+  {
+    // fixed point light
+    auto pointLight =
+        LveGameObject::makePointLight(3.f, 0.2f, {-6.0f, -1.f, -1.f}, 1.0f);
+    pointLight.color = {1.0f, 0.5, 0.0f};
+
     gameObjects.emplace(pointLight.getId(), std::move(pointLight));
   }
 }

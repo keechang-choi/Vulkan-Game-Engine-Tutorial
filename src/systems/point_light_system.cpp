@@ -121,8 +121,6 @@ void PointLightSystem::render(FrameInfo& frameInfo) {
   }
 }
 void PointLightSystem::update(FrameInfo& frameInfo, GlobalUbo& ubo) {
-  auto rotateLight =
-      glm::rotate(glm::mat4(1.f), frameInfo.frameTime, {0.f, -1.f, 0.f});
   int lightIndex = 0;
   for (auto& kv : frameInfo.gameObjects) {
     auto& obj = kv.second;
@@ -130,9 +128,19 @@ void PointLightSystem::update(FrameInfo& frameInfo, GlobalUbo& ubo) {
 
     assert(lightIndex < MAX_LIGHTS && "Point lights exceed maximum specified.");
 
+    // update angle
+    obj.pointLight->angle += frameInfo.frameTime;
+    if (obj.pointLight->angle > glm::two_pi<float>()) {
+      obj.pointLight->angle -= glm::two_pi<float>();
+    }
+    auto rotateLight =
+        glm::rotate(glm::mat4(1.f), obj.pointLight->angle, {0.f, -1.f, 0.f});
+
+    glm::vec4 radiusPos =
+        glm::vec4(obj.pointLight->rotationRadius, 0.f, 0.f, 1.f);
     // update light position
     obj.transform.translation =
-        glm::vec3(rotateLight * glm::vec4(obj.transform.translation, 1.f));
+        obj.pointLight->rotationCenter + glm::vec3(rotateLight * radiusPos);
 
     // copy light to ubo
     ubo.pointLights[lightIndex].position =

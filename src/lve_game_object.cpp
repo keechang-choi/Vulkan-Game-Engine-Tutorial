@@ -60,12 +60,17 @@ glm::mat3 TransformComponent::normalMatrix() {
 }
 
 LveGameObject LveGameObject::makePointLight(float intensity, float radius,
+                                            glm::vec3 rotationCenter,
+                                            float rotationRadius, float angle,
                                             glm::vec3 color) {
   LveGameObject gameObj = LveGameObject::createGameObject();
   gameObj.color = color;
   gameObj.transform.scale.x = radius;
   gameObj.pointLight = std::make_unique<PointLightComponent>();
   gameObj.pointLight->lightIntensity = intensity;
+  gameObj.pointLight->rotationRadius = rotationRadius;
+  gameObj.pointLight->rotationCenter = rotationCenter;
+  gameObj.pointLight->angle = angle;
   return gameObj;
 }
 
