@@ -294,6 +294,7 @@ void LveSwapChain::createFramebuffers() {
 
 void LveSwapChain::createDepthResources() {
   VkFormat depthFormat = findDepthFormat();
+  std::cout << "DepthFormat: " << depthFormat << std::endl;
   swapChainDepthFormat = depthFormat;
   VkExtent2D swapChainExtent = getSwapChainExtent();
 
@@ -324,6 +325,7 @@ void LveSwapChain::createDepthResources() {
     depthImageViews[i] = device.createImageView(depthImages[i], depthFormat,
                                                 VK_IMAGE_ASPECT_DEPTH_BIT);
 
+    // TODO: CHECK validation layer warn
     device.transitionImageLayout(
         depthImages[i], depthFormat, VK_IMAGE_LAYOUT_UNDEFINED,
         VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);

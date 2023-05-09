@@ -43,7 +43,8 @@ FirstApp::FirstApp() {
     }
     texture_obj_num++;
   }
-  std::cout << texture_obj_num << " < " << maxObjectNum << std::endl;
+  std::cout << "object num: " << texture_obj_num << " < " << maxObjectNum
+            << std::endl;
 
   assert(texture_obj_num < maxObjectNum);
 }
@@ -202,8 +203,8 @@ void FirstApp::loadGameObjects() {
                                            "textures/gray-1.jpg");
   auto floor = LveGameObject::createGameObject();
   floor.model = lveModel;
-  floor.transform.translation = {0.f, .5f, 0.f};
-  floor.transform.scale = {9.f, 1.f, 3.f};
+  floor.transform.translation = {3.f, .5f, 0.f};
+  floor.transform.scale = {6.f, 1.f, 3.f};
   gameObjects.emplace(floor.getId(), std::move(floor));
 
   lveModel = LveModel::createModelFromFile(lveDevice, "models/quad.obj",
@@ -220,7 +221,8 @@ void FirstApp::loadGameObjects() {
   gameObjects.emplace(wallWithTexture.getId(), std::move(wallWithTexture));
 
   lveModel = LveModel::createModelFromFile(
-      lveDevice, "models/food_apple_01_4k.obj", "textures/food_apple_01_diff_4k_blender.jpg");
+      lveDevice, "models/food_apple_01_4k.obj",
+      "textures/food_apple_01_diff_4k_blender.jpg");
   //"textures/gray-1.jpg"
   auto apple = LveGameObject::createGameObject();
   apple.model = lveModel;
@@ -232,6 +234,19 @@ void FirstApp::loadGameObjects() {
   // };
   apple.transform.scale = {15.f, 15.f, 15.f};
   gameObjects.emplace(apple.getId(), std::move(apple));
+
+  lveModel = LveModel::createModelFromFile(lveDevice, "models/viking_room.obj",
+                                           "textures/viking_room.png");
+  auto viking_room = LveGameObject::createGameObject();
+  viking_room.model = lveModel;
+  viking_room.transform.translation = {-6.0f, 0.5f, 0.f};
+  viking_room.transform.rotation = {
+      glm::half_pi<float>(),
+      glm::half_pi<float>(),
+      0.f,
+  };
+  viking_room.transform.scale = {3.0f, 3.0f, 3.0f};
+  gameObjects.emplace(viking_room.getId(), std::move(viking_room));
 
   std::vector<glm::vec3> lightColors{
       {1.f, .1f, .1f}, {.1f, .1f, 1.f}, {.1f, 1.f, .1f},
@@ -247,6 +262,9 @@ void FirstApp::loadGameObjects() {
     pointLight.transform.translation =
         glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
     gameObjects.emplace(pointLight.getId(), std::move(pointLight));
+  }
+  {
+    // fixed point light
   }
 }
 
