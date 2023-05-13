@@ -24,11 +24,12 @@ class TutImage {
   uint32_t width_, height_;
   uint32_t mipLevels_;
   void* mapped;
+  VkFormat format_;
 };
 
 class TutTexture {
  public:
-  TutTexture(lve::LveDevice& device);
+  TutTexture(lve::LveDevice& device, uint32_t mipLevels = 1u);
   ~TutTexture();
 
   TutTexture(const TutImage&) = delete;
@@ -37,8 +38,10 @@ class TutTexture {
   VkSampler getTextureSampler() { return textureSampler; }
 
  private:
+  void createTextureSampler();
+
   lve::LveDevice& lveDevice;
   VkSampler textureSampler;
-  void createTextureSampler();
+  uint32_t mipLevels_;
 };
 }  // namespace tut

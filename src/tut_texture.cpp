@@ -7,7 +7,11 @@ namespace tut {
 TutImage::TutImage(lve::LveDevice& device, uint32_t width, uint32_t height,
                    uint32_t mipLevels, VkFormat format, VkImageTiling tiling,
                    VkImageUsageFlags usage, VkMemoryPropertyFlags properties)
-    : lveDevice{device}, width_{width}, height_{height}, mipLevels_{mipLevels} {
+    : lveDevice{device},
+      width_{width},
+      height_{height},
+      mipLevels_{mipLevels},
+      format_{format} {
   VkImageCreateInfo imageInfo{};
   imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
   imageInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -31,6 +35,12 @@ TutImage::~TutImage() {
 }
 
 void TutImage::generateMipmaps() {
+  // Check if image format supports linear blitting
+  // throws exception if not supported
+  lveDevice.findSupportedFormat(
+      {VK_FORMAT_R8G8B8A8_SRGB}, VK_IMAGE_TILING_OPTIMAL,
+      VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT);
+
   VkCommandBuffer commandBuffer = lveDevice.beginSingleTimeCommands();
 
   // common barrier settings
@@ -108,7 +118,8 @@ void TutImage::generateMipmaps() {
   lveDevice.endSingleTimeCommands(commandBuffer);
 }
 
-TutTexture::TutTexture(lve::LveDevice& device) : lveDevice{device} {
+TutTexture::TutTexture(lve::LveDevice& device, uint32_t mipLevels)
+    : lveDevice{device}, mipLevels_{mipLevels} {
   createTextureSampler();
 }
 TutTexture::~TutTexture() {
@@ -144,7 +155,7 @@ void TutTexture::createTextureSampler() {
   samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
   samplerInfo.mipLodBias = 0.0f;
   samplerInfo.minLod = 0.0f;
-  samplerInfo.maxLod = 0.0f;
+  samplerInfo.maxLod = static_cast<float>(mipLevels_);
 
   if (vkCreateSampler(lveDevice.device(), &samplerInfo, nullptr,
                       &textureSampler) != VK_SUCCESS) {

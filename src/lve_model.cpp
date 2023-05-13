@@ -159,10 +159,12 @@ void LveModel::createTextureImage(const std::string& texture_path) {
 
   stbi_image_free(pixels);
 
+  // NOTE: VK_IMAGE_USAGE_TRANSFER_SRC_BIT  for mipmap
   textureImage = std::make_unique<tut::TutImage>(
       lveDevice, texWidth, texHeight, mipLevels, VK_FORMAT_R8G8B8A8_SRGB,
       VK_IMAGE_TILING_OPTIMAL,
-      VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+      VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
+          VK_IMAGE_USAGE_SAMPLED_BIT,
       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
   // layout transition
@@ -182,6 +184,7 @@ void LveModel::createTextureImage(const std::string& texture_path) {
   //                                 VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
   //                                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
+  // CHECK: for miplevels 1
   textureImage->generateMipmaps();
 }
 

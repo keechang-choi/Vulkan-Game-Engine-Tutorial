@@ -54,6 +54,9 @@ class LveModel {
   void bind(VkCommandBuffer commandBuffer);
   void draw(VkCommandBuffer commandBuffer);
 
+  // return raw pointer of texture image instance.
+  // if no texture image exists, return nullptr.
+  tut::TutImage *getTextureImagePtr() { return textureImage.get(); }
   VkImageView getTextureImageView() { return textureImageView; }
   VkDescriptorSet textureDescriptorSet = VK_NULL_HANDLE;
 

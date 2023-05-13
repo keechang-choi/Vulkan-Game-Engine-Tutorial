@@ -80,7 +80,9 @@ void FirstApp::run() {
         .build(globalDescriptorSets[i]);
   }
 
-  tut::TutTexture tutTexture{lveDevice};
+  // User sampler that only dependent on mipLevels
+  // to avoid move or copy constructor, use unique_ptr
+  std::unordered_map<int, std::unique_ptr<tut::TutTexture>> mipMipSamplers;
 
   for (auto &kv : gameObjects) {
     auto &obj = kv.second;
@@ -88,18 +90,32 @@ void FirstApp::run() {
     // to skip for objects w/o model(point lights)
     if (obj.model == nullptr) continue;
     auto &model = obj.model;
+
+    // to avoid duplicated resource for shared models.
     if (model->textureDescriptorSet != VK_NULL_HANDLE) {
       continue;
+    }
+    // skip for game objects that not havine texture images.
+    if (model->getTextureImagePtr() == nullptr) {
+      continue;
+    }
+
+    uint32_t mipLevels = model->getTextureImagePtr()->getMipLevels();
+    if (mipMipSamplers.find(mipLevels) == mipMipSamplers.end()) {
+      mipMipSamplers[mipLevels] =
+          std::make_unique<tut::TutTexture>(lveDevice, mipLevels);
     }
 
     VkDescriptorImageInfo imageInfo{};
     imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
     imageInfo.imageView = model->getTextureImageView();
-    imageInfo.sampler = tutTexture.getTextureSampler();
+    imageInfo.sampler = mipMipSamplers[mipLevels]->getTextureSampler();
     LveDescriptorWriter(*objectSetLayout, *globalPool)
         .writeImage(0, &imageInfo)
         .build(model->textureDescriptorSet);
   }
+
+  std::cout << "Sampler Num : " << mipMipSamplers.size() << std::endl;
 
   SimpleRenderSystem simpleRenderSystem{
       lveDevice,
