@@ -39,7 +39,7 @@ LveModel::LveModel(LveDevice& device, const LveModel::Builder& builder)
   createVertexBuffers(builder.vertices);
   createIndexBuffers(builder.indices);
 
-  createTextureImage(builder.texture_path);
+  createTextureImage(builder.texture_path, builder.use_mipmap);
   createTextureImageView();
 }
 LveModel ::~LveModel() {
@@ -50,7 +50,7 @@ LveModel ::~LveModel() {
 
 std::unique_ptr<LveModel> LveModel::createModelFromFile(
     LveDevice& device, const std::string& filepath,
-    const std::string& texture_path) {
+    const std::string& texture_path, bool use_mipmap) {
   LveModel::Builder builder{};
   builder.loadModel(ENGINE_DIR + filepath);
   // TODO: load image as unique_ptr?
@@ -59,6 +59,7 @@ std::unique_ptr<LveModel> LveModel::createModelFromFile(
   } else {
     builder.texture_path = ENGINE_DIR + texture_path;
   }
+  builder.use_mipmap = use_mipmap;
   std::cout << "Vertex count: " << builder.vertices.size() << std::endl;
   return std::make_unique<LveModel>(device, builder);
 }
@@ -123,7 +124,8 @@ void LveModel::createIndexBuffers(const std::vector<uint32_t>& indices) {
                        bufferSize);
 }
 
-void LveModel::createTextureImage(const std::string& texture_path) {
+void LveModel::createTextureImage(const std::string& texture_path,
+                                  bool use_mipmap) {
   if (texture_path.empty()) {
     return;
   }
@@ -140,6 +142,15 @@ void LveModel::createTextureImage(const std::string& texture_path) {
   VkDeviceSize imageSize = 4 * indexCount;
   uint32_t pixelSize = 4;
 
+  uint32_t mipLevels;
+  if (use_mipmap) {
+    mipLevels = static_cast<uint32_t>(
+                    std::floor(std::log2(std::max(texWidth, texHeight)))) +
+                1;
+  } else {
+    mipLevels = 1u;
+  }
+
   LveBuffer stagingBuffer{
       lveDevice,
       pixelSize,
@@ -154,35 +165,42 @@ void LveModel::createTextureImage(const std::string& texture_path) {
 
   stbi_image_free(pixels);
 
+  // NOTE: VK_IMAGE_USAGE_TRANSFER_SRC_BIT  for mipmap
   textureImage = std::make_unique<tut::TutImage>(
-      lveDevice, texWidth, texHeight, VK_FORMAT_R8G8B8A8_SRGB,
+      lveDevice, texWidth, texHeight, mipLevels, VK_FORMAT_R8G8B8A8_SRGB,
       VK_IMAGE_TILING_OPTIMAL,
-      VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+      VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
+          VK_IMAGE_USAGE_SAMPLED_BIT,
       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
   // layout transition
   lveDevice.transitionImageLayout(
       textureImage->getImage(), VK_FORMAT_R8G8B8A8_SRGB,
-      VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+      VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+      textureImage->getMipLevels());
 
   // copy
   lveDevice.copyBufferToImage(
       stagingBuffer.getBuffer(), textureImage->getImage(),
       static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), 1);
 
-  lveDevice.transitionImageLayout(textureImage->getImage(),
-                                  VK_FORMAT_R8G8B8A8_SRGB,
-                                  VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                                  VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+  // TODO: remove after blit cmd
+  // lveDevice.transitionImageLayout(textureImage->getImage(),
+  //                                 VK_FORMAT_R8G8B8A8_SRGB,
+  //                                 VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+  //                                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+  // CHECK: for miplevels 1
+  textureImage->generateMipmaps();
 }
 
 void LveModel::createTextureImageView() {
   if (textureImage == nullptr) {
     return;
   }
-  textureImageView = lveDevice.createImageView(textureImage->getImage(),
-                                               VK_FORMAT_R8G8B8A8_SRGB,
-                                               VK_IMAGE_ASPECT_COLOR_BIT);
+  textureImageView = lveDevice.createImageView(
+      textureImage->getImage(), VK_FORMAT_R8G8B8A8_SRGB,
+      VK_IMAGE_ASPECT_COLOR_BIT, textureImage->getMipLevels());
 }
 
 void LveModel::bind(VkCommandBuffer commandBuffer) {

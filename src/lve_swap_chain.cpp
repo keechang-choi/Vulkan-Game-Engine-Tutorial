@@ -325,7 +325,7 @@ void LveSwapChain::createDepthResources() {
     depthImageViews[i] = device.createImageView(depthImages[i], depthFormat,
                                                 VK_IMAGE_ASPECT_DEPTH_BIT);
 
-    // TODO: CHECK validation layer warn
+    // NOTE: depth mask condition
     device.transitionImageLayout(
         depthImages[i], depthFormat, VK_IMAGE_LAYOUT_UNDEFINED,
         VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);

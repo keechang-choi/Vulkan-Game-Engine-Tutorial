@@ -80,7 +80,9 @@ void FirstApp::run() {
         .build(globalDescriptorSets[i]);
   }
 
-  tut::TutTexture tutTexture{lveDevice};
+  // User sampler that only dependent on mipLevels
+  // to avoid move or copy constructor, use unique_ptr
+  std::unordered_map<int, std::unique_ptr<tut::TutTexture>> mipMipSamplers;
 
   for (auto &kv : gameObjects) {
     auto &obj = kv.second;
@@ -88,18 +90,32 @@ void FirstApp::run() {
     // to skip for objects w/o model(point lights)
     if (obj.model == nullptr) continue;
     auto &model = obj.model;
+
+    // to avoid duplicated resource for shared models.
     if (model->textureDescriptorSet != VK_NULL_HANDLE) {
       continue;
+    }
+    // skip for game objects that not havine texture images.
+    if (model->getTextureImagePtr() == nullptr) {
+      continue;
+    }
+
+    uint32_t mipLevels = model->getTextureImagePtr()->getMipLevels();
+    if (mipMipSamplers.find(mipLevels) == mipMipSamplers.end()) {
+      mipMipSamplers[mipLevels] =
+          std::make_unique<tut::TutTexture>(lveDevice, mipLevels);
     }
 
     VkDescriptorImageInfo imageInfo{};
     imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
     imageInfo.imageView = model->getTextureImageView();
-    imageInfo.sampler = tutTexture.getTextureSampler();
+    imageInfo.sampler = mipMipSamplers[mipLevels]->getTextureSampler();
     LveDescriptorWriter(*objectSetLayout, *globalPool)
         .writeImage(0, &imageInfo)
         .build(model->textureDescriptorSet);
   }
+
+  std::cout << "Sampler Num : " << mipMipSamplers.size() << std::endl;
 
   SimpleRenderSystem simpleRenderSystem{
       lveDevice,
@@ -254,7 +270,23 @@ void FirstApp::loadGameObjects() {
     viking_room.transform.rotation = {
         glm::half_pi<float>(),
         glm::half_pi<float>(),
-        0.f,
+        -glm::half_pi<float>(),
+    };
+    viking_room.transform.scale = {3.0f, 3.0f, 3.0f};
+    gameObjects.emplace(viking_room.getId(), std::move(viking_room));
+  }
+
+  // viking room w/o mipmap
+  {
+    std::shared_ptr<LveModel> lveModel = LveModel::createModelFromFile(
+        lveDevice, "models/viking_room.obj", "textures/viking_room.png", false);
+    auto viking_room = LveGameObject::createGameObject();
+    viking_room.model = lveModel;
+    viking_room.transform.translation = {-9.0f, 0.5f, 0.f};
+    viking_room.transform.rotation = {
+        glm::half_pi<float>(),
+        glm::half_pi<float>(),
+        -glm::half_pi<float>(),
     };
     viking_room.transform.scale = {3.0f, 3.0f, 3.0f};
     gameObjects.emplace(viking_room.getId(), std::move(viking_room));
@@ -277,7 +309,13 @@ void FirstApp::loadGameObjects() {
     auto pointLight =
         LveGameObject::makePointLight(3.f, 0.2f, {-6.0f, -1.f, -1.f}, 1.0f);
     pointLight.color = {1.0f, 0.5, 0.0f};
-
+    gameObjects.emplace(pointLight.getId(), std::move(pointLight));
+  }
+  {
+    // fixed point light
+    auto pointLight =
+        LveGameObject::makePointLight(3.f, 0.2f, {-9.0f, -1.f, -1.f}, 1.0f);
+    pointLight.color = {1.0f, 0.5, 0.0f};
     gameObjects.emplace(pointLight.getId(), std::move(pointLight));
   }
 }

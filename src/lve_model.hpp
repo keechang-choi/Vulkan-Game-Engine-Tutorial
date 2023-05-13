@@ -37,6 +37,7 @@ class LveModel {
     std::vector<Vertex> vertices{};
     std::vector<uint32_t> indices{};
     std::string texture_path;
+    bool use_mipmap;
 
     void loadModel(const std::string &filepath);
   };
@@ -49,18 +50,21 @@ class LveModel {
 
   static std::unique_ptr<LveModel> createModelFromFile(
       LveDevice &device, const std::string &filepath,
-      const std::string &texture_path);
+      const std::string &texture_path, bool use_mipmap = true);
 
   void bind(VkCommandBuffer commandBuffer);
   void draw(VkCommandBuffer commandBuffer);
 
+  // return raw pointer of texture image instance.
+  // if no texture image exists, return nullptr.
+  tut::TutImage *getTextureImagePtr() { return textureImage.get(); }
   VkImageView getTextureImageView() { return textureImageView; }
   VkDescriptorSet textureDescriptorSet = VK_NULL_HANDLE;
 
  private:
   void createVertexBuffers(const std::vector<Vertex> &vertices);
   void createIndexBuffers(const std::vector<uint32_t> &indices);
-  void createTextureImage(const std::string &texture_path);
+  void createTextureImage(const std::string &texture_path, bool use_mipmap);
   void createTextureImageView();
 
   LveDevice &lveDevice;

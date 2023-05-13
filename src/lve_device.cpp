@@ -514,7 +514,8 @@ void LveDevice::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer,
 
 void LveDevice::transitionImageLayout(VkImage image, VkFormat format,
                                       VkImageLayout oldLayout,
-                                      VkImageLayout newLayout) {
+                                      VkImageLayout newLayout,
+                                      uint32_t mipLevels) {
   VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
   VkImageMemoryBarrier barrier{};
@@ -527,18 +528,18 @@ void LveDevice::transitionImageLayout(VkImage image, VkFormat format,
 
   barrier.image = image;
   barrier.subresourceRange.baseMipLevel = 0;
-  barrier.subresourceRange.levelCount = 1;
+  barrier.subresourceRange.levelCount = mipLevels;
   barrier.subresourceRange.baseArrayLayer = 0;
   barrier.subresourceRange.layerCount = 1;
 
   if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
-      barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+    barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 
-      if (hasStencilComponent(format)) {
-          barrier.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
-      }
+    if (hasStencilComponent(format)) {
+      barrier.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
+    }
   } else {
-      barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
   }
 
   VkPipelineStageFlags sourceStage;
@@ -629,7 +630,8 @@ void LveDevice::createImageWithInfo(const VkImageCreateInfo &imageInfo,
 }
 
 VkImageView LveDevice::createImageView(VkImage image, VkFormat format,
-                                       VkImageAspectFlags aspectFlags) {
+                                       VkImageAspectFlags aspectFlags,
+                                       uint32_t mipLevels) {
   VkImageViewCreateInfo viewInfo{};
   viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
   viewInfo.image = image;
@@ -637,7 +639,7 @@ VkImageView LveDevice::createImageView(VkImage image, VkFormat format,
   viewInfo.format = format;
   viewInfo.subresourceRange.aspectMask = aspectFlags;
   viewInfo.subresourceRange.baseMipLevel = 0;
-  viewInfo.subresourceRange.levelCount = 1;
+  viewInfo.subresourceRange.levelCount = mipLevels;
   viewInfo.subresourceRange.baseArrayLayer = 0;
   viewInfo.subresourceRange.layerCount = 1;
 
