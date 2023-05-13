@@ -192,9 +192,13 @@ all the base codes and materials from
   - covered: 
     - depth image, render pass update
   - ![image](https://github.com/keechang-choi/Vulkan-Game-Engine-Tutorial/assets/49244613/e000c2d0-d91a-42b4-96c9-ed898bef7b60)
-- Tutorial Loding models
+- Tutorial Loading models
   - covered: 
     - textured model loading, vertex deduplication
   - refacotoring: point light rotation system
   - ![image](https://github.com/keechang-choi/Vulkan-Game-Engine-Tutorial/assets/49244613/d345443d-150d-4904-b899-dbaa61ec75cf)
+- Tutorial Generating mipmaps
+  - covered: 
+    - using mipmap, image blit command and transition, sampler mipmap update
+  - ![vulkan-study-mipmap](https://github.com/keechang-choi/Vulkan-Game-Engine-Tutorial/assets/49244613/564f2603-199c-400e-bca3-2c778a388e31)
 
