@@ -39,7 +39,7 @@ LveModel::LveModel(LveDevice& device, const LveModel::Builder& builder)
   createVertexBuffers(builder.vertices);
   createIndexBuffers(builder.indices);
 
-  createTextureImage(builder.texture_path);
+  createTextureImage(builder.texture_path, builder.use_mipmap);
   createTextureImageView();
 }
 LveModel ::~LveModel() {
@@ -50,7 +50,7 @@ LveModel ::~LveModel() {
 
 std::unique_ptr<LveModel> LveModel::createModelFromFile(
     LveDevice& device, const std::string& filepath,
-    const std::string& texture_path) {
+    const std::string& texture_path, bool use_mipmap) {
   LveModel::Builder builder{};
   builder.loadModel(ENGINE_DIR + filepath);
   // TODO: load image as unique_ptr?
@@ -59,6 +59,7 @@ std::unique_ptr<LveModel> LveModel::createModelFromFile(
   } else {
     builder.texture_path = ENGINE_DIR + texture_path;
   }
+  builder.use_mipmap = use_mipmap;
   std::cout << "Vertex count: " << builder.vertices.size() << std::endl;
   return std::make_unique<LveModel>(device, builder);
 }
@@ -123,7 +124,8 @@ void LveModel::createIndexBuffers(const std::vector<uint32_t>& indices) {
                        bufferSize);
 }
 
-void LveModel::createTextureImage(const std::string& texture_path) {
+void LveModel::createTextureImage(const std::string& texture_path,
+                                  bool use_mipmap) {
   if (texture_path.empty()) {
     return;
   }
@@ -141,9 +143,13 @@ void LveModel::createTextureImage(const std::string& texture_path) {
   uint32_t pixelSize = 4;
 
   uint32_t mipLevels;
-  mipLevels = static_cast<uint32_t>(
-                  std::floor(std::log2(std::max(texWidth, texHeight)))) +
-              1;
+  if (use_mipmap) {
+    mipLevels = static_cast<uint32_t>(
+                    std::floor(std::log2(std::max(texWidth, texHeight)))) +
+                1;
+  } else {
+    mipLevels = 1u;
+  }
 
   LveBuffer stagingBuffer{
       lveDevice,

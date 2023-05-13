@@ -270,7 +270,23 @@ void FirstApp::loadGameObjects() {
     viking_room.transform.rotation = {
         glm::half_pi<float>(),
         glm::half_pi<float>(),
-        0.f,
+        -glm::half_pi<float>(),
+    };
+    viking_room.transform.scale = {3.0f, 3.0f, 3.0f};
+    gameObjects.emplace(viking_room.getId(), std::move(viking_room));
+  }
+
+  // viking room w/o mipmap
+  {
+    std::shared_ptr<LveModel> lveModel = LveModel::createModelFromFile(
+        lveDevice, "models/viking_room.obj", "textures/viking_room.png", false);
+    auto viking_room = LveGameObject::createGameObject();
+    viking_room.model = lveModel;
+    viking_room.transform.translation = {-9.0f, 0.5f, 0.f};
+    viking_room.transform.rotation = {
+        glm::half_pi<float>(),
+        glm::half_pi<float>(),
+        -glm::half_pi<float>(),
     };
     viking_room.transform.scale = {3.0f, 3.0f, 3.0f};
     gameObjects.emplace(viking_room.getId(), std::move(viking_room));
@@ -293,7 +309,13 @@ void FirstApp::loadGameObjects() {
     auto pointLight =
         LveGameObject::makePointLight(3.f, 0.2f, {-6.0f, -1.f, -1.f}, 1.0f);
     pointLight.color = {1.0f, 0.5, 0.0f};
-
+    gameObjects.emplace(pointLight.getId(), std::move(pointLight));
+  }
+  {
+    // fixed point light
+    auto pointLight =
+        LveGameObject::makePointLight(3.f, 0.2f, {-9.0f, -1.f, -1.f}, 1.0f);
+    pointLight.color = {1.0f, 0.5, 0.0f};
     gameObjects.emplace(pointLight.getId(), std::move(pointLight));
   }
 }
