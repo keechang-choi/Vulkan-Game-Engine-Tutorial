@@ -127,10 +127,14 @@ void LveDevice::pickPhysicalDevice() {
   }
 
   vkGetPhysicalDeviceProperties(physicalDevice, &properties);
+
+  msaaSamples = getMaxUsableSampleCount();
   std::cout << "physical device: " << properties.deviceName << std::endl;
 
   std::cout << "maxAnisotropy : " << properties.limits.maxSamplerAnisotropy
             << std::endl;
+
+  std::cout << "msaaSamples : " << msaaSamples << std::endl;
 }
 
 void LveDevice::createLogicalDevice() {
@@ -655,6 +659,31 @@ VkImageView LveDevice::createImageView(VkImage image, VkFormat format,
 bool LveDevice::hasStencilComponent(VkFormat format) {
   return format == VK_FORMAT_D32_SFLOAT_S8_UINT ||
          format == VK_FORMAT_D24_UNORM_S8_UINT;
+}
+
+VkSampleCountFlagBits LveDevice::getMaxUsableSampleCount() {
+  VkSampleCountFlags counts = properties.limits.framebufferColorSampleCounts &
+                              properties.limits.framebufferDepthSampleCounts;
+  if (counts & VK_SAMPLE_COUNT_64_BIT) {
+    return VK_SAMPLE_COUNT_64_BIT;
+  }
+  if (counts & VK_SAMPLE_COUNT_32_BIT) {
+    return VK_SAMPLE_COUNT_32_BIT;
+  }
+  if (counts & VK_SAMPLE_COUNT_16_BIT) {
+    return VK_SAMPLE_COUNT_16_BIT;
+  }
+  if (counts & VK_SAMPLE_COUNT_8_BIT) {
+    return VK_SAMPLE_COUNT_8_BIT;
+  }
+  if (counts & VK_SAMPLE_COUNT_4_BIT) {
+    return VK_SAMPLE_COUNT_4_BIT;
+  }
+  if (counts & VK_SAMPLE_COUNT_2_BIT) {
+    return VK_SAMPLE_COUNT_2_BIT;
+  }
+
+  return VK_SAMPLE_COUNT_1_BIT;
 }
 
 }  // namespace lve

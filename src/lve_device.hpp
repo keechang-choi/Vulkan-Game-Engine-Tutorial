@@ -98,6 +98,7 @@ class LveDevice {
   bool checkDeviceExtensionSupport(VkPhysicalDevice device);
   SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
   bool hasStencilComponent(VkFormat format);
+  VkSampleCountFlagBits getMaxUsableSampleCount();
 
   VkInstance instance;
   VkDebugUtilsMessengerEXT debugMessenger;
@@ -114,6 +115,8 @@ class LveDevice {
       "VK_LAYER_KHRONOS_validation"};
   const std::vector<const char *> deviceExtensions = {
       VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+
+  VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT;
 };
 
 }  // namespace lve
