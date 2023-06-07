@@ -138,6 +138,9 @@ void FirstApp::run() {
 
   auto currentTime = std::chrono::high_resolution_clock::now();
   float MAX_FRAME_TIME = 0.1f;
+  float avgFrameTime = 0.f;
+  float alpha = 0.99f;
+  int cnt = 0;
   while (!lveWindow.shouldClose()) {
     glfwPollEvents();
 
@@ -148,7 +151,12 @@ void FirstApp::run() {
             .count();
 
     currentTime = newTime;
-
+    if (cnt < 1000) {
+      // avgFrameTime = alpha * avgFrameTime + (1.0f - alpha) * frameTime;
+      // std::cout << "avgFrameTime: " << avgFrameTime << std::endl;
+      std::cout << frameTime << ", ";
+      cnt++;
+    }
     frameTime = glm::min(frameTime, MAX_FRAME_TIME);
 
     cameraController.moveInPlaneXZ(lveWindow.getGLFWwindow(), frameTime,
