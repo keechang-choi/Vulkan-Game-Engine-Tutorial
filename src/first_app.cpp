@@ -148,7 +148,6 @@ void FirstApp::run() {
             .count();
 
     currentTime = newTime;
-
     frameTime = glm::min(frameTime, MAX_FRAME_TIME);
 
     cameraController.moveInPlaneXZ(lveWindow.getGLFWwindow(), frameTime,

@@ -75,18 +75,15 @@ VkResult LveSwapChain::acquireNextImage(uint32_t *imageIndex) {
       imageAvailableSemaphores[currentFrame],  // must be a not signaled
                                                // semaphore
       VK_NULL_HANDLE, imageIndex);
+  // std::cout << "frame: " << currentFrame << " SwapChain image: " <<
+  // *imageIndex
+  //           << " Result: " << result << std::endl;
 
   return result;
 }
 
 VkResult LveSwapChain::submitCommandBuffers(const VkCommandBuffer *buffers,
                                             uint32_t *imageIndex) {
-  if (imagesInFlight[*imageIndex] != VK_NULL_HANDLE) {
-    vkWaitForFences(device.device(), 1, &imagesInFlight[*imageIndex], VK_TRUE,
-                    UINT64_MAX);
-  }
-  imagesInFlight[*imageIndex] = inFlightFences[currentFrame];
-
   VkSubmitInfo submitInfo = {};
   submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
@@ -143,6 +140,11 @@ void LveSwapChain::createSwapChain() {
       imageCount > swapChainSupport.capabilities.maxImageCount) {
     imageCount = swapChainSupport.capabilities.maxImageCount;
   }
+  std::cout << "swapChainSupport maxImageCount: "
+            << swapChainSupport.capabilities.maxImageCount << std::endl;
+  std::cout << "swapChainSupport minImageCount: "
+            << swapChainSupport.capabilities.minImageCount << std::endl;
+  std::cout << "imageCount: " << imageCount << std::endl;
 
   VkSwapchainCreateInfoKHR createInfo = {};
   createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -188,10 +190,18 @@ void LveSwapChain::createSwapChain() {
   // we'll first query the final number of images with vkGetSwapchainImagesKHR,
   // then resize the container and finally call it again to retrieve the
   // handles.
-  vkGetSwapchainImagesKHR(device.device(), swapChain, &imageCount, nullptr);
+  VkResult getSwapChainRes;
+  getSwapChainRes =
+      vkGetSwapchainImagesKHR(device.device(), swapChain, &imageCount, nullptr);
+
+  std::cout << "First getSwapChainImages Result: " << getSwapChainRes
+            << ", imageCount: " << imageCount << std::endl;
   swapChainImages.resize(imageCount);
-  vkGetSwapchainImagesKHR(device.device(), swapChain, &imageCount,
-                          swapChainImages.data());
+
+  getSwapChainRes = vkGetSwapchainImagesKHR(
+      device.device(), swapChain, &imageCount, swapChainImages.data());
+  std::cout << "Second getSwapChainImages Result: " << getSwapChainRes
+            << ", imageCount: " << imageCount << std::endl;
 
   swapChainImageFormat = surfaceFormat.format;
   swapChainExtent = extent;
@@ -336,7 +346,7 @@ void LveSwapChain::createSyncObjects() {
   imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
   renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
   inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
-  imagesInFlight.resize(imageCount(), VK_NULL_HANDLE);
+  std::cout << "image count : " << imageCount() << std::endl;
 
   VkSemaphoreCreateInfo semaphoreInfo = {};
   semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
