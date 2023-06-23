@@ -77,6 +77,11 @@ class LveSwapChain {
   std::vector<VkImage> depthImages;
   std::vector<VkDeviceMemory> depthImageMemorys;
   std::vector<VkImageView> depthImageViews;
+
+  std::vector<VkImage> colorImages;
+  std::vector<VkDeviceMemory> colorImageMemorys;
+  std::vector<VkImageView> colorImageViews;
+
   std::vector<VkImage> swapChainImages;
   std::vector<VkImageView> swapChainImageViews;
 
