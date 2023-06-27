@@ -59,6 +59,7 @@ class LveSwapChain {
   void createRenderPass();
   void createFramebuffers();
   void createSyncObjects();
+  void createColorResources();
 
   // Helper functions
   VkSurfaceFormatKHR chooseSwapSurfaceFormat(

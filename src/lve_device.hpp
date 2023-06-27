@@ -76,6 +76,7 @@ class LveDevice {
   VkImageView createImageView(VkImage image, VkFormat format,
                               VkImageAspectFlags aspectFlags,
                               uint32_t mipLevels = 1u);
+  VkSampleCountFlagBits getSampleCount() { return msaaSamples; }
 
   VkPhysicalDeviceProperties properties;
 

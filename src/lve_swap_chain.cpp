@@ -30,6 +30,7 @@ void LveSwapChain::init() {
   createSwapChain();
   createImageViews();
   createRenderPass();
+  createColorResources();
   createDepthResources();
   createFramebuffers();
   createSyncObjects();
@@ -50,6 +51,12 @@ LveSwapChain::~LveSwapChain() {
     vkDestroyImageView(device.device(), depthImageViews[i], nullptr);
     vkDestroyImage(device.device(), depthImages[i], nullptr);
     vkFreeMemory(device.device(), depthImageMemorys[i], nullptr);
+  }
+
+  for (int i = 0; i < colorImages.size(); i++) {
+    vkDestroyImageView(device.device(), colorImageViews[i], nullptr);
+    vkDestroyImage(device.device(), colorImages[i], nullptr);
+    vkFreeMemory(device.device(), colorImageMemorys[i], nullptr);
   }
 
   for (auto framebuffer : swapChainFramebuffers) {
@@ -325,7 +332,7 @@ void LveSwapChain::createDepthResources() {
     imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
     imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-    imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+    imageInfo.samples = device.getSampleCount();
     imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
     imageInfo.flags = 0;
 
@@ -423,6 +430,39 @@ VkFormat LveSwapChain::findDepthFormat() {
       {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT,
        VK_FORMAT_D24_UNORM_S8_UINT},
       VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+}
+void LveSwapChain::createColorResources() {
+  VkFormat colorFormat = swapChainImageFormat;
+  VkExtent2D swapChainExtent = getSwapChainExtent();
+
+  colorImages.resize(imageCount());
+  colorImageMemorys.resize(imageCount());
+  colorImageViews.resize(imageCount());
+
+  for (int i = 0; i < colorImages.size(); i++) {
+    VkImageCreateInfo imageInfo{};
+    imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+    imageInfo.imageType = VK_IMAGE_TYPE_2D;
+    imageInfo.extent.width = swapChainExtent.width;
+    imageInfo.extent.height = swapChainExtent.height;
+    imageInfo.extent.depth = 1;
+    imageInfo.mipLevels = 1;
+    imageInfo.arrayLayers = 1;
+    imageInfo.format = colorFormat;
+    imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+    imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    imageInfo.usage =
+        VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+    imageInfo.samples = device.getSampleCount();
+    imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    imageInfo.flags = 0;
+
+    device.createImageWithInfo(imageInfo, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                               colorImages[i], colorImageMemorys[i]);
+
+    colorImageViews[i] = device.createImageView(colorImages[i], colorFormat,
+                                                VK_IMAGE_ASPECT_COLOR_BIT, 1u);
+  }
 }
 
 }  // namespace lve
