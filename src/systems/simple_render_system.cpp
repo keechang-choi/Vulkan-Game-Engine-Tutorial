@@ -67,6 +67,8 @@ void SimpleRenderSystem::createPipeline(VkRenderPass renderPass) {
   LvePipeline::defaultPipelineConfigInfo(pipelineConfig);
   pipelineConfig.renderPass = renderPass;
   pipelineConfig.pipelineLayout = pipelineLayout;
+  pipelineConfig.multisampleInfo.rasterizationSamples =
+      lveDevice.getSampleCount();
   lvePipeline = std::make_unique<LvePipeline>(
       lveDevice, "./shaders/simple_shader.vert.spv",
       "./shaders/simple_shader.frag.spv", pipelineConfig);

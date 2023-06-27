@@ -225,7 +225,7 @@ void LveSwapChain::createImageViews() {
 void LveSwapChain::createRenderPass() {
   VkAttachmentDescription depthAttachment{};
   depthAttachment.format = findDepthFormat();
-  depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+  depthAttachment.samples = device.getSampleCount();
   depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
   depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
   depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -240,23 +240,38 @@ void LveSwapChain::createRenderPass() {
 
   VkAttachmentDescription colorAttachment = {};
   colorAttachment.format = getSwapChainImageFormat();
-  colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+  colorAttachment.samples = device.getSampleCount();
   colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
   colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
   colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
   colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
   colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-  colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+  colorAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
   VkAttachmentReference colorAttachmentRef = {};
   colorAttachmentRef.attachment = 0;
   colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+  VkAttachmentDescription colorAttachmentResolve{};
+  colorAttachmentResolve.format = swapChainImageFormat;
+  colorAttachmentResolve.samples = VK_SAMPLE_COUNT_1_BIT;
+  colorAttachmentResolve.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+  colorAttachmentResolve.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+  colorAttachmentResolve.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+  colorAttachmentResolve.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+  colorAttachmentResolve.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  colorAttachmentResolve.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+  VkAttachmentReference colorAttachmentResolveRef{};
+  colorAttachmentResolveRef.attachment = 2;
+  colorAttachmentResolveRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
   VkSubpassDescription subpass = {};
   subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
   subpass.colorAttachmentCount = 1;
   subpass.pColorAttachments = &colorAttachmentRef;
   subpass.pDepthStencilAttachment = &depthAttachmentRef;
+  subpass.pResolveAttachments = &colorAttachmentResolveRef;
 
   VkSubpassDependency dependency = {};
   dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
@@ -269,8 +284,9 @@ void LveSwapChain::createRenderPass() {
   dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT |
                              VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
-  std::array<VkAttachmentDescription, 2> attachments = {colorAttachment,
-                                                        depthAttachment};
+  std::array<VkAttachmentDescription, 3> attachments = {
+      colorAttachment, depthAttachment, colorAttachmentResolve};
+
   VkRenderPassCreateInfo renderPassInfo = {};
   renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
   renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
@@ -289,8 +305,12 @@ void LveSwapChain::createRenderPass() {
 void LveSwapChain::createFramebuffers() {
   swapChainFramebuffers.resize(imageCount());
   for (size_t i = 0; i < imageCount(); i++) {
-    std::array<VkImageView, 2> attachments = {swapChainImageViews[i],
-                                              depthImageViews[i]};
+    // attachment ref index order
+    std::array<VkImageView, 3> attachments = {
+        colorImageViews[i],
+        depthImageViews[i],
+        swapChainImageViews[i],
+    };
 
     VkExtent2D swapChainExtent = getSwapChainExtent();
     VkFramebufferCreateInfo framebufferInfo = {};

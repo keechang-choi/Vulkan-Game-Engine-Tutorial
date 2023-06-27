@@ -115,7 +115,7 @@ void FirstApp::run() {
         .build(model->textureDescriptorSet);
   }
 
-  std::cout << "Sampler Num : " << mipMipSamplers.size() << std::endl;
+  std::cout << "Mipmap Sampler Num : " << mipMipSamplers.size() << std::endl;
 
   SimpleRenderSystem simpleRenderSystem{
       lveDevice,

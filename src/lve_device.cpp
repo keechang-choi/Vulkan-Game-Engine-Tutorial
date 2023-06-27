@@ -129,6 +129,7 @@ void LveDevice::pickPhysicalDevice() {
   vkGetPhysicalDeviceProperties(physicalDevice, &properties);
 
   msaaSamples = getMaxUsableSampleCount();
+  // msaaSamples = VK_SAMPLE_COUNT_1_BIT;
   std::cout << "physical device: " << properties.deviceName << std::endl;
 
   std::cout << "maxAnisotropy : " << properties.limits.maxSamplerAnisotropy
