@@ -157,6 +157,9 @@ void LveDevice::createLogicalDevice() {
 
   VkPhysicalDeviceFeatures deviceFeatures = {};
 
+  // for smaple shading
+  deviceFeatures.sampleRateShading = VK_TRUE;
+
 #ifdef _WIN32
   deviceFeatures.samplerAnisotropy = VK_TRUE;
 #else
