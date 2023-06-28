@@ -203,5 +203,12 @@ all the base codes and materials from
   - ![vulkan-study-mipmap](https://github.com/keechang-choi/Vulkan-Game-Engine-Tutorial/assets/49244613/564f2603-199c-400e-bca3-2c778a388e31)
   - ![image](https://github.com/keechang-choi/Vulkan-Game-Engine-Tutorial/assets/49244613/b1967352-31a6-441e-a181-a0406ee0761f)
   - ![image](https://github.com/keechang-choi/Vulkan-Game-Engine-Tutorial/assets/49244613/544c079f-5072-41ea-8c8b-3f1932468fef)
+- Tutorial Multi-Sampling-Anti-Aliasing
+  - covered:
+    - MSAA sample count, render target update, sample shading
+  - | x1 w/o MSAA | MSAAx4 |
+    | ----------- | ----------- |
+    | ![image](https://github.com/keechang-choi/Vulkan-Game-Engine-Tutorial/assets/49244613/73ab1727-3a69-461e-aa1c-3edc678c2b63) | ![image](https://github.com/keechang-choi/Vulkan-Game-Engine-Tutorial/assets/49244613/7ca0b3e3-388c-49ec-93da-8e7b80732cd8) |
 
+    
 
