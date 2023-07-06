@@ -68,12 +68,12 @@ else()
   message(STATUS "Using glfw header at: ${GLFW_INCLUDE_DIRS}")
 endif()
 
-include_directories(external)
-include_directories(external/glm)
-include_directories(external/glfw)
+# include_directories(external)
+# include_directories(external/glm)
+# include_directories(external/glfw)
 
 if (NOT GLM_PATH)
-  add_subdirectory(${PROJECT_SOURCE_DIR}/external/glm)
+  set(GLM_PATH "external/glm")
 endif()
 
 
