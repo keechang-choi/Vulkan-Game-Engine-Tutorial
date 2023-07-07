@@ -81,5 +81,6 @@
         "span": "cpp",
         "stack": "cpp"
     },
-    "cmake.configureOnOpen": true
+    "cmake.configureOnOpen": true,
+    "C_Cpp.default.compilerPath": "C:\\Program Files\\mingw-w64\\x86_64-13.1.0-release-posix-seh-ucrt-rt_v11-rev1\\mingw64\\bin\\cpp.exe"
 }
