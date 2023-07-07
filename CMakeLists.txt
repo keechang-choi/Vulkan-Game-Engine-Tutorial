@@ -24,10 +24,10 @@ endif()
 
 project(${NAME} VERSION 0.23.0)
 
-# 1. Set VULKAN_SDK_PATH in .env.cmake to target specific vulkan version
-if (DEFINED VULKAN_SDK_PATH)
-  set(Vulkan_INCLUDE_DIRS "${VULKAN_SDK_PATH}/Include") # 1.1 Make sure this include path is correct
-  set(Vulkan_LIBRARIES "${VULKAN_SDK_PATH}/Lib") # 1.2 Make sure lib path is correct
+# 1. Set VK_SDK_PATH in .env.cmake to target specific vulkan version
+if (DEFINED VK_SDK_PATH)
+  set(Vulkan_INCLUDE_DIRS "${VK_SDK_PATH}/Include") # 1.1 Make sure this include path is correct
+  set(Vulkan_LIBRARIES "${VK_SDK_PATH}/Lib") # 1.2 Make sure lib path is correct
   set(Vulkan_FOUND "True")
 else()
   find_package(Vulkan REQUIRED) # throws error if could not find Vulkan
@@ -51,18 +51,31 @@ if (DEFINED GLFW_PATH)
     set(GLFW_LIB "${GLFW_PATH}/lib-mingw-w64") # 2.1 make sure matches glfw mingw subdirectory
   endif()
 else()
-  find_package(glfw3 3.3 REQUIRED)
+  find_package(glfw3 3.3)
   set(GLFW_LIB glfw)
-  message(STATUS "Found GLFW")
+  message(STATUS "GLFW_LIB = ${GLFW_LIB}")
 endif()
-if (NOT GLFW_LIB)
-	message(FATAL_ERROR "Could not find glfw library!")
+
+# using GLFW from source
+if (NOT glfw3_FOUND)
+	# message(FATAL_ERROR "Could not find glfw library!")
+  add_subdirectory(${PROJECT_SOURCE_DIR}/external/glfw)
+  set(GLFW_LIB "${PROJECT_SOURCE_DIR}/external/glfw")
+  set(GLFW_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/external/glfw/include")
+
 else()
 	message(STATUS "Using glfw lib at: ${GLFW_LIB}")
   message(STATUS "Using glfw header at: ${GLFW_INCLUDE_DIRS}")
 endif()
 
-include_directories(external)
+# include_directories(external)
+# include_directories(external/glm)
+# include_directories(external/glfw)
+
+if (NOT GLM_PATH)
+  set(GLM_PATH "external/glm")
+endif()
+
 
 # If TINYOBJ_PATH not specified in .env.cmake, try fetching from git repo
 if (NOT TINYOBJ_PATH)
@@ -110,7 +123,7 @@ if (WIN32)
     ${GLFW_LIB}
   )
 
-  target_link_libraries(${PROJECT_NAME} glfw3 vulkan-1)
+  target_link_libraries(${PROJECT_NAME} glfw vulkan-1)
 elseif (UNIX)
     message(STATUS "CREATING BUILD FOR UNIX")
     target_include_directories(${PROJECT_NAME} PUBLIC
@@ -131,8 +144,8 @@ find_program(GLSL_VALIDATOR glslangValidator HINTS
   ${Vulkan_GLSLANG_VALIDATOR_EXECUTABLE} 
   /usr/bin 
   /usr/local/bin 
-  ${VULKAN_SDK_PATH}/Bin
-  ${VULKAN_SDK_PATH}/Bin32
+  ${VK_SDK_PATH}/Bin
+  ${VK_SDK_PATH}/Bin32
   $ENV{VULKAN_SDK}/Bin/ 
   $ENV{VULKAN_SDK}/Bin32/
 )
