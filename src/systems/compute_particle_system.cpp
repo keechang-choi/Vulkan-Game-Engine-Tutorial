@@ -10,6 +10,7 @@
 
 // std
 #include <random>
+#include <stdexcept>
 #include <vector>
 
 namespace tut {
@@ -21,12 +22,12 @@ ComputeParticleSystem::ComputeParticleSystem(lve::LveDevice& device,
   createShaderStorageBuffers();
 
   createGraphicsDescriptorSetLayout();
-  createGraphicsDescriptorSets();
+  createGraphicsDescriptorSets(pool);
   createGraphicsPipelineLayout();
   createGraphicsPipeline(renderPass);
 
   createComputeDescriptorSetLayout();
-  createComputeDescriptorSets();
+  createComputeDescriptorSets(pool);
   createComputePipelineLayout();
   createComputePipeline();
 }
@@ -145,5 +146,66 @@ void ComputeParticleSystem::createComputeDescriptorSets(
         .build(computeDescriptorSets[i]);
   }
 }
+
+void ComputeParticleSystem::createGraphicsPipelineLayout() {
+  // TODO: create multiple pipelines at once to optimize.
+  std::vector<VkDescriptorSetLayout> descriptorSetLayouts{
+      graphicsDescriptorSetLayout->getDescriptorSetLayout()};
+
+  VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+  pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+  pipelineLayoutInfo.setLayoutCount =
+      static_cast<size_t>(descriptorSetLayouts.size());
+  pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
+  if (vkCreatePipelineLayout(lveDevice.device(), &pipelineLayoutInfo, nullptr,
+                             &graphicsPipelineLayout) != VK_SUCCESS) {
+    throw std::runtime_error("failed to create graphics pipeline layout!");
+  }
+}
+
+void ComputeParticleSystem::createComputePipelineLayout() {
+  // TODO: create multiple pipelines at once to optimize.
+  std::vector<VkDescriptorSetLayout> descriptorSetLayouts{
+      computeDescriptorSetLayout->getDescriptorSetLayout()};
+
+  VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+  pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+  pipelineLayoutInfo.setLayoutCount =
+      static_cast<size_t>(descriptorSetLayouts.size());
+  pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
+  if (vkCreatePipelineLayout(lveDevice.device(), &pipelineLayoutInfo, nullptr,
+                             &computePipelineLayout) != VK_SUCCESS) {
+    throw std::runtime_error("failed to create compute pipeline layout!");
+  }
+}
+
+void ComputeParticleSystem::createGraphicsPipeline(VkRenderPass renderPass) {
+  assert(graphicsPipelineLayout != nullptr &&
+         "Cannot create pipeline before pipeline layout.");
+
+  lve::PipelineConfigInfo pipelineConfig{};
+  lve::LvePipeline::defaultPipelineConfigInfo(pipelineConfig);
+  pipelineConfig.renderPass = renderPass;
+  pipelineConfig.pipelineLayout = graphicsPipelineLayout;
+  pipelineConfig.multisampleInfo.rasterizationSamples =
+      lveDevice.getSampleCount();
+  lveGraphicsPipeline = std::make_unique<lve::LvePipeline>(lveDevice);
+  lveGraphicsPipeline->createGraphicsPipeline(
+      "./shaders/compute_particle.vert.spv",
+      "./shaders/compute_particle.frag.spv", pipelineConfig);
+}
+
+void ComputeParticleSystem::createComputePipeline() {
+  assert(computePipelineLayout != nullptr &&
+         "Cannot create pipeline before pipeline layout.");
+
+  lve::PipelineConfigInfo pipelineConfig{};
+  pipelineConfig.pipelineLayout = computePipelineLayout;
+
+  lveComputePipeline = std::make_unique<lve::LvePipeline>(lveDevice);
+  lveComputePipeline->createComputePipeline(
+      "./shaders/compute_particle.comp.spv", pipelineConfig);
+}
+// TODO: compute command buffer and dispatch part
 
 }  // namespace tut

@@ -53,17 +53,15 @@ class ComputeParticleSystem {
   void createComputeDescriptorSets(lve::LveDescriptorPool &pool);
 
   lve::LveDevice &lveDevice;
-  // TODO: pipeline layout 및 생성
+
   std::unique_ptr<lve::LvePipeline> lveGraphicsPipeline;
   VkPipelineLayout graphicsPipelineLayout;
   std::unique_ptr<lve::LvePipeline> lveComputePipeline;
   VkPipelineLayout computePipelineLayout;
 
-  // TODO: ubo ssbo 생성,
   std::vector<std::unique_ptr<lve::LveBuffer>> uniformBuffers;
   std::vector<std::unique_ptr<lve::LveBuffer>> shaderStorageBuffers;
 
-  // TODO: descriptor set 생성, compute-graphics 분리
   std::unique_ptr<lve::LveDescriptorSetLayout> graphicsDescriptorSetLayout;
   std::vector<VkDescriptorSet> graphicsDescriptorSets;
 
