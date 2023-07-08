@@ -14,7 +14,8 @@
 
 namespace tut {
 ComputeParticleSystem::ComputeParticleSystem(lve::LveDevice& device,
-                                             VkRenderPass renderPass)
+                                             VkRenderPass renderPass,
+                                             lve::LveDescriptorPool& pool)
     : lveDevice{device} {
   createUniformBuffers();
   createShaderStorageBuffers();
@@ -91,4 +92,58 @@ void ComputeParticleSystem::createShaderStorageBuffers() {
                          shaderStorageBuffers[i]->getBuffer(), bufferSize);
   }
 }
+
+void ComputeParticleSystem::createGraphicsDescriptorSetLayout() {
+  graphicsDescriptorSetLayout =
+      lve::LveDescriptorSetLayout::Builder(lveDevice)
+          .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                      VK_SHADER_STAGE_ALL_GRAPHICS)
+          .build();
+}
+
+void ComputeParticleSystem::createComputeDescriptorSetLayout() {
+  computeDescriptorSetLayout =
+      lve::LveDescriptorSetLayout::Builder(lveDevice)
+          .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                      VK_SHADER_STAGE_COMPUTE_BIT)
+          .addBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+                      VK_SHADER_STAGE_COMPUTE_BIT)
+          .addBinding(2, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+                      VK_SHADER_STAGE_COMPUTE_BIT)
+          .build();
+}
+
+void ComputeParticleSystem::createGraphicsDescriptorSets(
+    lve::LveDescriptorPool& pool) {
+  graphicsDescriptorSets.resize(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+  for (int i = 0; i < graphicsDescriptorSets.size(); i++) {
+    auto bufferInfo = uniformBuffers[i]->descriptorInfo();
+    lve::LveDescriptorWriter(*graphicsDescriptorSetLayout, pool)
+        .writeBuffer(0, &bufferInfo)
+        .build(graphicsDescriptorSets[i]);
+  }
+}
+
+void ComputeParticleSystem::createComputeDescriptorSets(
+    lve::LveDescriptorPool& pool) {
+  // allocate descriptor sets를 한번에 여러개 가능한데 일단 기본 구조대로
+  // 하나씩.
+  // https://github.com/Overv/VulkanTutorial/blob/main/code/31_compute_shader.cpp#L862
+  computeDescriptorSets.resize(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+  for (int i = 0; i < computeDescriptorSets.size(); i++) {
+    auto uniformBufferInfo = uniformBuffers[i]->descriptorInfo();
+    int prevFrameIdx = (i - 1 + lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT) %
+                       lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT;
+    auto storageBufferInfoLastFrame =
+        shaderStorageBuffers[prevFrameIdx]->descriptorInfo();
+    auto storageBufferInfoCurrentFrame =
+        shaderStorageBuffers[i]->descriptorInfo();
+    lve::LveDescriptorWriter(*computeDescriptorSetLayout, pool)
+        .writeBuffer(0, &uniformBufferInfo)
+        .writeBuffer(1, &storageBufferInfoLastFrame)
+        .writeBuffer(2, &storageBufferInfoCurrentFrame)
+        .build(computeDescriptorSets[i]);
+  }
+}
+
 }  // namespace tut

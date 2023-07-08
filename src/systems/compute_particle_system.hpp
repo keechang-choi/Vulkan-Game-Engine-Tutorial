@@ -25,7 +25,8 @@ class ComputeParticleSystem {
  public:
   static constexpr uint32_t PARTICLE_COUNT = 64u;
 
-  ComputeParticleSystem(lve::LveDevice &device, VkRenderPass renderPass);
+  ComputeParticleSystem(lve::LveDevice &device, VkRenderPass renderPass,
+                        lve::LveDescriptorPool &pool);
   ~ComputeParticleSystem();
 
   ComputeParticleSystem(const ComputeParticleSystem &) = delete;
@@ -48,8 +49,8 @@ class ComputeParticleSystem {
   void createShaderStorageBuffers();
   void createGraphicsDescriptorSetLayout();
   void createComputeDescriptorSetLayout();
-  void createGraphicsDescriptorSets();
-  void createComputeDescriptorSets();
+  void createGraphicsDescriptorSets(lve::LveDescriptorPool &pool);
+  void createComputeDescriptorSets(lve::LveDescriptorPool &pool);
 
   lve::LveDevice &lveDevice;
   // TODO: pipeline layout 및 생성
