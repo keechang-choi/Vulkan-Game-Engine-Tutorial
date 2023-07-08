@@ -6,6 +6,7 @@
 #include "lve_camera.hpp"
 #include "lve_descriptors.hpp"
 #include "lve_model.hpp"
+#include "systems/compute_particle_system.hpp"
 #include "systems/point_light_system.hpp"
 #include "systems/simple_render_system.hpp"
 #include "tut_texture.hpp"
