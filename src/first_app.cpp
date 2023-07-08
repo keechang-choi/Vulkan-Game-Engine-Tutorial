@@ -29,10 +29,12 @@ namespace lve {
 FirstApp::FirstApp() {
   globalPool =
       LveDescriptorPool::Builder(lveDevice)
-          .setMaxSets(LveSwapChain::MAX_FRAMES_IN_FLIGHT + maxObjectNum)
+          .setMaxSets(LveSwapChain::MAX_FRAMES_IN_FLIGHT * 5 + maxObjectNum)
           .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                       LveSwapChain::MAX_FRAMES_IN_FLIGHT)
+                       LveSwapChain::MAX_FRAMES_IN_FLIGHT * 3)
           .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, maxObjectNum)
+          .addPoolSize(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+                       LveSwapChain::MAX_FRAMES_IN_FLIGHT * 2)
           .build();
 
   loadGameObjects();
