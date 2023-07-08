@@ -11,10 +11,21 @@
 #include <vector>
 
 namespace tut {
+struct Particle {
+  glm::vec2 position;
+  glm::vec2 velocity;
+  glm::vec4 color;
+};
+
+struct ParticleUbo {
+  float deltaTime = 1.0;
+};
+
 class ComputeParticleSystem {
  public:
-  ComputeParticleSystem(lve::LveDevice &device, VkRenderPass renderPass,
-                        VkDescriptorSetLayout graphicsDescriptorSetLayout);
+  static constexpr uint32_t PARTICLE_COUNT = 64u;
+
+  ComputeParticleSystem(lve::LveDevice &device, VkRenderPass renderPass);
   ~ComputeParticleSystem();
 
   ComputeParticleSystem(const ComputeParticleSystem &) = delete;
@@ -27,8 +38,7 @@ class ComputeParticleSystem {
   void renderParticles(lve::FrameInfo &frameInfo);
 
  private:
-  void createGraphicsPipelineLayout(
-      VkDescriptorSetLayout graphicsDescriptorSetLayout);
+  void createGraphicsPipelineLayout();
   void createGraphicsPipeline(VkRenderPass renderPass);
 
   void createComputePipelineLayout();

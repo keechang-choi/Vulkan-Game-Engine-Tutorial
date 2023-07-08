@@ -1,0 +1,94 @@
+#include "compute_particle_system.hpp"
+
+#include "lve_buffer.hpp"
+#include "lve_swap_chain.hpp"
+
+// libs
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <glm/glm.hpp>
+
+// std
+#include <random>
+#include <vector>
+
+namespace tut {
+ComputeParticleSystem::ComputeParticleSystem(lve::LveDevice& device,
+                                             VkRenderPass renderPass)
+    : lveDevice{device} {
+  createUniformBuffers();
+  createShaderStorageBuffers();
+
+  createGraphicsDescriptorSetLayout();
+  createGraphicsDescriptorSets();
+  createGraphicsPipelineLayout();
+  createGraphicsPipeline(renderPass);
+
+  createComputeDescriptorSetLayout();
+  createComputeDescriptorSets();
+  createComputePipelineLayout();
+  createComputePipeline();
+}
+ComputeParticleSystem::~ComputeParticleSystem() {
+  vkDestroyPipelineLayout(lveDevice.device(), graphicsPipelineLayout, nullptr);
+  vkDestroyPipelineLayout(lveDevice.device(), computePipelineLayout, nullptr);
+}
+
+void ComputeParticleSystem::createUniformBuffers() {
+  uniformBuffers.resize(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+  for (int i = 0; i < uniformBuffers.size(); i++) {
+    // NOTE: need to flush since non-coherent
+    uniformBuffers[i] = std::make_unique<lve::LveBuffer>(
+        lveDevice, sizeof(ParticleUbo), 1, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+    uniformBuffers[i]->map();
+  }
+}
+
+void ComputeParticleSystem::createShaderStorageBuffers() {
+  // initial particle data
+  std::default_random_engine randomEngine;
+  randomEngine.seed(1111);
+  std::uniform_real_distribution<float> randomDist(0.f, 1.f);
+
+  std::vector<Particle> particles(PARTICLE_COUNT);
+  for (auto& particle : particles) {
+    float r = 0.25f * randomDist(randomEngine);
+    float theta = glm::two_pi<float>() * randomDist(randomEngine);
+    float x = r * cos(theta);
+    float y = r * sin(theta);
+    particle.position = glm::vec2(x, y);
+    particle.velocity = glm::normalize(glm::vec2(x, y)) * 0.00025f;
+    particle.color =
+        glm::vec4(randomDist(randomEngine), randomDist(randomEngine),
+                  randomDist(randomEngine), 1.f);
+  }
+
+  // transfer using staging buffer
+  VkDeviceSize bufferSize = sizeof(Particle) * PARTICLE_COUNT;
+  uint32_t particleSize = sizeof(Particle);
+  lve::LveBuffer stagingBuffer{
+      lveDevice,
+      particleSize,
+      PARTICLE_COUNT,
+      VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+          VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+  };
+
+  stagingBuffer.map();
+  stagingBuffer.writeToBuffer((void*)particles.data());
+
+  // copy buffer
+  shaderStorageBuffers.resize(lve::LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+  for (int i = 0; i < shaderStorageBuffers.size(); i++) {
+    shaderStorageBuffers[i] = std::make_unique<lve::LveBuffer>(
+        lveDevice, particleSize, PARTICLE_COUNT,
+        VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
+            VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    lveDevice.copyBuffer(stagingBuffer.getBuffer(),
+                         shaderStorageBuffers[i]->getBuffer(), bufferSize);
+  }
+}
+}  // namespace tut
