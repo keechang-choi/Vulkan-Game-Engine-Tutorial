@@ -12,8 +12,12 @@ LveRenderer::LveRenderer(LveWindow& window, LveDevice& device)
     : lveWindow{window}, lveDevice{device} {
   recreateSwapChain();
   createCommandBuffers();
+  createComputeCommandBuffers();
 }
-LveRenderer::~LveRenderer() { freeCommandBuffers(); }
+LveRenderer::~LveRenderer() {
+  freeCommandBuffers();
+  freeComputeCommandBuffers();
+}
 
 void LveRenderer::recreateSwapChain() {
   auto extent = lveWindow.getExtent();
@@ -175,4 +179,56 @@ void LveRenderer::endSwapChainRenderPass(VkCommandBuffer commandBuffer) {
 
   vkCmdEndRenderPass(commandBuffer);
 }
+
+void LveRenderer::createComputeCommandBuffers() {
+  computeCommandBuffers.resize(LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+
+  VkCommandBufferAllocateInfo allocInfo{};
+  allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+  allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+  allocInfo.commandPool = lveDevice.getCommandPool();
+  allocInfo.commandBufferCount =
+      static_cast<uint32_t>(computeCommandBuffers.size());
+
+  if (vkAllocateCommandBuffers(lveDevice.device(), &allocInfo,
+                               computeCommandBuffers.data()) != VK_SUCCESS) {
+    throw std::runtime_error("failed to allocate compute command buffers!");
+  }
+}
+void LveRenderer::freeComputeCommandBuffers() {
+  vkFreeCommandBuffers(lveDevice.device(), lveDevice.getCommandPool(),
+                       static_cast<uint32_t>(computeCommandBuffers.size()),
+                       computeCommandBuffers.data());
+  computeCommandBuffers.clear();
+}
+
+VkCommandBuffer LveRenderer::beginComputeFrame() {
+  assert(!isComputeFrameStarted &&
+         "Can't call beginComputeFrame while already in progress.");
+
+  // TODO: call swapchain compute fence
+  isComputeFrameStarted = true;
+  auto computeCommandBuffer = getCurrentComputeCommandBuffer();
+  VkCommandBufferBeginInfo beginInfo{};
+  beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+  if (vkBeginCommandBuffer(computeCommandBuffer, &beginInfo) != VK_SUCCESS) {
+    throw std::runtime_error(
+        "failed to begin recording compute command buffer!");
+  }
+  return computeCommandBuffer;
+}
+
+void LveRenderer::endComputeFrame() {
+  assert(isComputeFrameStarted &&
+         "Can't call endComputeFrame while frame is not in progress.");
+  auto computeCommandBuffer = getCurrentComputeCommandBuffer();
+
+  if (vkEndCommandBuffer(computeCommandBuffer) != VK_SUCCESS) {
+    throw std::runtime_error("failed to record compute command buffer!");
+  }
+  // TODO: call swapchain compute queue submit
+
+  isComputeFrameStarted = false;
+}
+
 }  // namespace lve

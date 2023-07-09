@@ -31,7 +31,7 @@ class LveRenderer {
   }
 
   int getFrameIndex() const {
-    assert(isFrameStarted &&
+    assert((isFrameStarted || isComputeFrameStarted) &&
            "Cannot get frame index when frame not in progress.");
     return currentFrameIndex;
   }
@@ -39,19 +39,30 @@ class LveRenderer {
   void endFrame();
   void beginSwapChainRenderPass(VkCommandBuffer commandBuffer);
   void endSwapChainRenderPass(VkCommandBuffer commandBuffer);
+  VkCommandBuffer beginComputeFrame();
+  void endComputeFrame();
+  VkCommandBuffer getCurrentComputeCommandBuffer() const {
+    assert(isComputeFrameStarted &&
+           "Cannot get compute command buffer when frame not in progress.");
+    return computeCommandBuffers[currentFrameIndex];
+  }
 
  private:
   void createCommandBuffers();
   void freeCommandBuffers();
   void recreateSwapChain();
+  void createComputeCommandBuffers();
+  void freeComputeCommandBuffers();
 
   LveWindow &lveWindow;
   LveDevice &lveDevice;
   std::unique_ptr<LveSwapChain> lveSwapChain;
   std::vector<VkCommandBuffer> commandBuffers;
+  std::vector<VkCommandBuffer> computeCommandBuffers;
 
   uint32_t currentImageIndex;
   int currentFrameIndex{0};
   bool isFrameStarted{false};
+  bool isComputeFrameStarted{false};
 };
 }  // namespace lve
