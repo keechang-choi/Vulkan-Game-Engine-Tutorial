@@ -26,7 +26,7 @@ struct ParticleUbo {
 
 class ComputeParticleSystem {
  public:
-  static constexpr uint32_t PARTICLE_COUNT = 64u;
+  static constexpr uint32_t PARTICLE_COUNT = 256u;
 
   ComputeParticleSystem(lve::LveDevice &device, VkRenderPass renderPass,
                         lve::LveDescriptorPool &pool);
@@ -40,6 +40,7 @@ class ComputeParticleSystem {
   void computeParticles(lve::FrameInfo &frameInfo);
   // render particles
   void renderParticles(lve::FrameInfo &frameInfo);
+  void updateUbo(lve::FrameInfo &frameInfo);
 
  private:
   void createGraphicsPipelineLayout();

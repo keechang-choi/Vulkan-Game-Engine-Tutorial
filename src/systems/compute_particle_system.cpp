@@ -243,5 +243,31 @@ void ComputeParticleSystem::createComputePipeline() {
       "./shaders/compute_particle.comp.spv", pipelineConfig);
 }
 // TODO: compute command buffer and dispatch part
+void ComputeParticleSystem::updateUbo(lve::FrameInfo& frameInfo) {
+  ParticleUbo ubo{};
+  ubo.deltaTime = frameInfo.frameTime;
+
+  uniformBuffers[frameInfo.frameIndex]->writeToBuffer(&ubo);
+  uniformBuffers[frameInfo.frameIndex]->flush();
+}
+
+void ComputeParticleSystem::computeParticles(lve::FrameInfo& frameInfo) {
+  lveComputePipeline->bind(frameInfo.commandBuffer);
+
+  vkCmdBindDescriptorSets(frameInfo.commandBuffer,
+                          VK_PIPELINE_BIND_POINT_COMPUTE, computePipelineLayout,
+                          0, 1, &computeDescriptorSets[frameInfo.frameIndex], 0,
+                          nullptr);
+  vkCmdDispatch(frameInfo.commandBuffer, PARTICLE_COUNT / 256, 1, 1);
+}
+
+void ComputeParticleSystem::renderParticles(lve::FrameInfo& frameInfo) {
+  lveGraphicsPipeline->bind(frameInfo.commandBuffer);
+  VkBuffer buffers[] = {
+      shaderStorageBuffers[frameInfo.frameIndex]->getBuffer()};
+  VkDeviceSize offsets[] = {0};
+  vkCmdBindVertexBuffers(frameInfo.commandBuffer, 0, 1, buffers, offsets);
+  vkCmdDraw(frameInfo.commandBuffer, PARTICLE_COUNT, 1, 0, 0);
+}
 
 }  // namespace tut

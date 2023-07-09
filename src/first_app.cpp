@@ -168,6 +168,21 @@ void FirstApp::run() {
     float aspect = lveRenderer.getAspectRatio();
     camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 100.f);
 
+    if (auto computeCommandBuffer = lveRenderer.beginComputeFrame()) {
+      int frameIndex = lveRenderer.getFrameIndex();
+      LveGameObject::Map dummyGameObjects;
+      FrameInfo frameInfo{
+          frameIndex, frameTime,      computeCommandBuffer,
+          camera,     VK_NULL_HANDLE, dummyGameObjects,
+      };
+
+      // update ubo
+      computeParticleSystem.updateUbo(frameInfo);
+      computeParticleSystem.computeParticles(frameInfo);
+
+      lveRenderer.endComputeFrame();
+    }
+
     if (auto commandBuffer = lveRenderer.beginFrame()) {
       int frameIndex = lveRenderer.getFrameIndex();
 
@@ -199,6 +214,8 @@ void FirstApp::run() {
       // order matters
       simpleRenderSystem.renderGameObjects(frameInfo);
       pointLightSystem.render(frameInfo);
+      // render particles
+      computeParticleSystem.renderParticles(frameInfo);
 
       lveRenderer.endSwapChainRenderPass(commandBuffer);
       lveRenderer.endFrame();
