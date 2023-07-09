@@ -206,7 +206,9 @@ VkCommandBuffer LveRenderer::beginComputeFrame() {
   assert(!isComputeFrameStarted &&
          "Can't call beginComputeFrame while already in progress.");
 
-  // TODO: call swapchain compute fence
+  // call swapchain compute fence wait
+  lveSwapChain->prepareCompute();
+
   isComputeFrameStarted = true;
   auto computeCommandBuffer = getCurrentComputeCommandBuffer();
   VkCommandBufferBeginInfo beginInfo{};
@@ -226,7 +228,8 @@ void LveRenderer::endComputeFrame() {
   if (vkEndCommandBuffer(computeCommandBuffer) != VK_SUCCESS) {
     throw std::runtime_error("failed to record compute command buffer!");
   }
-  // TODO: call swapchain compute queue submit
+  // call swapchain compute queue submit
+  lveSwapChain->submitComputeCommandBuffers(&computeCommandBuffer);
 
   isComputeFrameStarted = false;
 }
