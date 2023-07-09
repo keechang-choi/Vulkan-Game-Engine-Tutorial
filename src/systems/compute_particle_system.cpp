@@ -266,6 +266,10 @@ void ComputeParticleSystem::renderParticles(lve::FrameInfo& frameInfo) {
   VkBuffer buffers[] = {
       shaderStorageBuffers[frameInfo.frameIndex]->getBuffer()};
   VkDeviceSize offsets[] = {0};
+  vkCmdBindDescriptorSets(
+      frameInfo.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
+      graphicsPipelineLayout, 0, 1,
+      &graphicsDescriptorSets[frameInfo.frameIndex], 0, nullptr);
   vkCmdBindVertexBuffers(frameInfo.commandBuffer, 0, 1, buffers, offsets);
   vkCmdDraw(frameInfo.commandBuffer, PARTICLE_COUNT, 1, 0, 0);
 }

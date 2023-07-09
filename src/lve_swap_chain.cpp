@@ -96,10 +96,12 @@ VkResult LveSwapChain::submitCommandBuffers(const VkCommandBuffer *buffers,
   VkSubmitInfo submitInfo = {};
   submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-  VkSemaphore waitSemaphores[] = {imageAvailableSemaphores[currentFrame]};
+  VkSemaphore waitSemaphores[] = {computeFinishedSemaphores[currentFrame],
+                                  imageAvailableSemaphores[currentFrame]};
   VkPipelineStageFlags waitStages[] = {
+      VK_PIPELINE_STAGE_VERTEX_INPUT_BIT,
       VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
-  submitInfo.waitSemaphoreCount = 1;
+  submitInfo.waitSemaphoreCount = 2;
   submitInfo.pWaitSemaphores = waitSemaphores;
   submitInfo.pWaitDstStageMask = waitStages;
 
