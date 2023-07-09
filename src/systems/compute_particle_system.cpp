@@ -189,6 +189,8 @@ void ComputeParticleSystem::createGraphicsPipeline(VkRenderPass renderPass) {
   pipelineConfig.pipelineLayout = graphicsPipelineLayout;
   pipelineConfig.multisampleInfo.rasterizationSamples =
       lveDevice.getSampleCount();
+  pipelineConfig.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+
   lveGraphicsPipeline = std::make_unique<lve::LvePipeline>(lveDevice);
   lveGraphicsPipeline->createGraphicsPipeline(
       "./shaders/compute_particle.vert.spv",
