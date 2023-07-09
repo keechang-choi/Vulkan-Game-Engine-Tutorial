@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 
 // std
+#include <iostream>
 #include <random>
 #include <stdexcept>
 #include <vector>
@@ -91,7 +92,7 @@ void ComputeParticleSystem::createShaderStorageBuffers() {
     float x = r * cos(theta);
     float y = r * sin(theta);
     particle.position = glm::vec2(x, y);
-    particle.velocity = glm::normalize(glm::vec2(x, y)) * 0.00025f;
+    particle.velocity = glm::normalize(glm::vec2(x, y)) * 0.05f;
     particle.color =
         glm::vec4(randomDist(randomEngine), randomDist(randomEngine),
                   randomDist(randomEngine), 1.f);
@@ -216,6 +217,16 @@ void ComputeParticleSystem::createGraphicsPipeline(VkRenderPass renderPass) {
 
   lve::PipelineConfigInfo pipelineConfig{};
   lve::LvePipeline::defaultPipelineConfigInfo(pipelineConfig);
+  // NOTE: src alpha blender factor
+  lve::LvePipeline::enableAlphaBlending(pipelineConfig);
+  // dst factor zero -> discard existing alpha
+  // ??TODO: fix circle overlay alpha problem
+  pipelineConfig.colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+  pipelineConfig.colorBlendAttachment.dstAlphaBlendFactor =
+      VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+  pipelineConfig.attributeDescriptions.clear();
+  pipelineConfig.bindingDescriptions.clear();
+
   pipelineConfig.renderPass = renderPass;
   pipelineConfig.pipelineLayout = graphicsPipelineLayout;
   pipelineConfig.multisampleInfo.rasterizationSamples =
