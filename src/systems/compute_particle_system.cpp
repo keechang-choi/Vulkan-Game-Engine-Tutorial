@@ -14,6 +14,37 @@
 #include <vector>
 
 namespace tut {
+
+std::vector<VkVertexInputBindingDescription>
+Particle::getBindingDescriptions() {
+  std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
+  bindingDescriptions[0].binding = 0;
+  bindingDescriptions[0].stride = sizeof(Particle);
+  bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+  return bindingDescriptions;
+}
+
+std::vector<VkVertexInputAttributeDescription>
+Particle::getAttributeDescriptions() {
+  std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
+
+  attributeDescriptions.push_back({
+      0,                             // location
+      0,                             // binding
+      VK_FORMAT_R32G32_SFLOAT,       // format
+      offsetof(Particle, position),  // offset
+  });
+
+  attributeDescriptions.push_back({
+      1,                              // location
+      0,                              // binding
+      VK_FORMAT_R32G32B32A32_SFLOAT,  // format
+      offsetof(Particle, color),      // offset
+  });
+
+  return attributeDescriptions;
+}
+
 ComputeParticleSystem::ComputeParticleSystem(lve::LveDevice& device,
                                              VkRenderPass renderPass,
                                              lve::LveDescriptorPool& pool)
@@ -189,7 +220,10 @@ void ComputeParticleSystem::createGraphicsPipeline(VkRenderPass renderPass) {
   pipelineConfig.pipelineLayout = graphicsPipelineLayout;
   pipelineConfig.multisampleInfo.rasterizationSamples =
       lveDevice.getSampleCount();
+  // particle binding, attribute
   pipelineConfig.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+  pipelineConfig.bindingDescriptions = Particle::getBindingDescriptions();
+  pipelineConfig.attributeDescriptions = Particle::getAttributeDescriptions();
 
   lveGraphicsPipeline = std::make_unique<lve::LvePipeline>(lveDevice);
   lveGraphicsPipeline->createGraphicsPipeline(
