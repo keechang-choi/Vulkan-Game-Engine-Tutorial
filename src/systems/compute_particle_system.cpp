@@ -87,12 +87,12 @@ void ComputeParticleSystem::createShaderStorageBuffers() {
 
   std::vector<Particle> particles(PARTICLE_COUNT);
   for (auto& particle : particles) {
-    float r = 0.25f + 0.05f * randomDist(randomEngine);
+    float r = 0.10f + 0.05f * randomDist(randomEngine);
     float theta = glm::two_pi<float>() * randomDist(randomEngine);
     float x = r * cos(theta);
     float y = r * sin(theta);
     particle.position = glm::vec2(x, y);
-    particle.velocity = glm::normalize(glm::vec2(x, y)) * 1.50f;
+    particle.velocity = glm::normalize(glm::vec2(x, y)) * 0.50f;
     // particle.color =
     //     glm::vec4(randomDist(randomEngine), randomDist(randomEngine),
     //               randomDist(randomEngine), 1.f);
@@ -102,6 +102,8 @@ void ComputeParticleSystem::createShaderStorageBuffers() {
         (1.f + glm::cos(theta + 4.0f / 3.0f * glm::pi<float>())) / 2.0f};
 
     particle.color = glm::vec4(rgb[0], rgb[1], rgb[2], 1.0f);
+
+    particle.acceleration = glm::vec2(0.f, 0.2f);
   }
 
   // transfer using staging buffer

@@ -14,7 +14,9 @@ namespace tut {
 struct Particle {
   glm::vec2 position;
   glm::vec2 velocity;
-  glm::vec4 color;
+  glm::vec2 acceleration;
+  // NOTE: aligment
+  alignas(16) glm::vec4 color;
   static std::vector<VkVertexInputBindingDescription> getBindingDescriptions();
   static std::vector<VkVertexInputAttributeDescription>
   getAttributeDescriptions();
