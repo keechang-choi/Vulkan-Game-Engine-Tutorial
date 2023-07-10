@@ -50,6 +50,9 @@ class LveSwapChain {
     return swapChain.swapChainImageFormat == swapChainImageFormat &&
            swapChain.swapChainDepthFormat == swapChainDepthFormat;
   }
+  void prepareCompute();
+  void submitComputeCommandBuffers(
+      const VkCommandBuffer *computeCommandBuffers);
 
  private:
   void init();
@@ -96,6 +99,9 @@ class LveSwapChain {
   std::vector<VkSemaphore> renderFinishedSemaphores;
   std::vector<VkFence> inFlightFences;
   size_t currentFrame = 0;
+
+  std::vector<VkFence> computeInFlightFences;
+  std::vector<VkSemaphore> computeFinishedSemaphores;
 };
 
 }  // namespace lve

@@ -6,6 +6,7 @@
 #include "lve_camera.hpp"
 #include "lve_descriptors.hpp"
 #include "lve_model.hpp"
+#include "systems/compute_particle_system.hpp"
 #include "systems/point_light_system.hpp"
 #include "systems/simple_render_system.hpp"
 #include "tut_texture.hpp"
@@ -28,10 +29,12 @@ namespace lve {
 FirstApp::FirstApp() {
   globalPool =
       LveDescriptorPool::Builder(lveDevice)
-          .setMaxSets(LveSwapChain::MAX_FRAMES_IN_FLIGHT + maxObjectNum)
+          .setMaxSets(LveSwapChain::MAX_FRAMES_IN_FLIGHT * 5 + maxObjectNum)
           .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                       LveSwapChain::MAX_FRAMES_IN_FLIGHT)
+                       LveSwapChain::MAX_FRAMES_IN_FLIGHT * 3)
           .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, maxObjectNum)
+          .addPoolSize(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+                       LveSwapChain::MAX_FRAMES_IN_FLIGHT * 2)
           .build();
 
   loadGameObjects();
@@ -128,6 +131,13 @@ void FirstApp::run() {
       lveRenderer.getSwapChainRenderPass(),
       globalSetLayout->getDescriptorSetLayout(),
   };
+
+  tut::ComputeParticleSystem computeParticleSystem{
+      lveDevice,
+      lveRenderer.getSwapChainRenderPass(),
+      *globalPool,
+  };
+
   LveCamera camera{};
   // camera.setViewDirection(glm::vec3{0.f}, glm::vec3{0.5f, 0.f, 1.f});
   camera.setViewTarget(glm::vec3{-1.f, -2.f, 2.f}, glm::vec3{0.f, 0.f, 2.5f});
@@ -157,6 +167,21 @@ void FirstApp::run() {
 
     float aspect = lveRenderer.getAspectRatio();
     camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 100.f);
+
+    if (auto computeCommandBuffer = lveRenderer.beginComputeFrame()) {
+      int frameIndex = lveRenderer.getFrameIndex();
+      LveGameObject::Map dummyGameObjects;
+      FrameInfo frameInfo{
+          frameIndex, frameTime,      computeCommandBuffer,
+          camera,     VK_NULL_HANDLE, dummyGameObjects,
+      };
+
+      // update ubo
+      computeParticleSystem.updateUbo(frameInfo);
+      computeParticleSystem.computeParticles(frameInfo);
+
+      lveRenderer.endComputeFrame();
+    }
 
     if (auto commandBuffer = lveRenderer.beginFrame()) {
       int frameIndex = lveRenderer.getFrameIndex();
@@ -189,6 +214,8 @@ void FirstApp::run() {
       // order matters
       simpleRenderSystem.renderGameObjects(frameInfo);
       pointLightSystem.render(frameInfo);
+      // render particles
+      computeParticleSystem.renderParticles(frameInfo);
 
       lveRenderer.endSwapChainRenderPass(commandBuffer);
       lveRenderer.endFrame();

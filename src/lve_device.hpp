@@ -3,6 +3,7 @@
 #include "lve_window.hpp"
 
 // std lib headers
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -15,11 +16,12 @@ struct SwapChainSupportDetails {
 };
 
 struct QueueFamilyIndices {
-  uint32_t graphicsFamily;
-  uint32_t presentFamily;
-  bool graphicsFamilyHasValue = false;
-  bool presentFamilyHasValue = false;
-  bool isComplete() { return graphicsFamilyHasValue && presentFamilyHasValue; }
+  std::optional<uint32_t> graphicsAndComputeFamily;
+  std::optional<uint32_t> presentFamily;
+
+  bool isComplete() {
+    return graphicsAndComputeFamily.has_value() && presentFamily.has_value();
+  }
 };
 
 class LveDevice {
@@ -43,6 +45,7 @@ class LveDevice {
   VkDevice device() { return device_; }
   VkSurfaceKHR surface() { return surface_; }
   VkQueue graphicsQueue() { return graphicsQueue_; }
+  VkQueue computeQueue() { return computeQueue_; }
   VkQueue presentQueue() { return presentQueue_; }
 
   SwapChainSupportDetails getSwapChainSupport() {
@@ -110,6 +113,7 @@ class LveDevice {
   VkDevice device_;
   VkSurfaceKHR surface_;
   VkQueue graphicsQueue_;
+  VkQueue computeQueue_;
   VkQueue presentQueue_;
 
   const std::vector<const char *> validationLayers = {

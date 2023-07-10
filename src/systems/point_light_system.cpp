@@ -69,9 +69,10 @@ void PointLightSystem::createPipeline(VkRenderPass renderPass) {
   pipelineConfig.multisampleInfo.rasterizationSamples =
       lveDevice.getSampleCount();
 
-  lvePipeline = std::make_unique<LvePipeline>(
-      lveDevice, "./shaders/point_light.vert.spv",
-      "./shaders/point_light.frag.spv", pipelineConfig);
+  lvePipeline = std::make_unique<LvePipeline>(lveDevice);
+  lvePipeline->createGraphicsPipeline("./shaders/point_light.vert.spv",
+                                      "./shaders/point_light.frag.spv",
+                                      pipelineConfig);
 }
 
 void PointLightSystem::render(FrameInfo& frameInfo) {

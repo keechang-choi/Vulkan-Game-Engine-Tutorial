@@ -69,9 +69,10 @@ void SimpleRenderSystem::createPipeline(VkRenderPass renderPass) {
   pipelineConfig.pipelineLayout = pipelineLayout;
   pipelineConfig.multisampleInfo.rasterizationSamples =
       lveDevice.getSampleCount();
-  lvePipeline = std::make_unique<LvePipeline>(
-      lveDevice, "./shaders/simple_shader.vert.spv",
-      "./shaders/simple_shader.frag.spv", pipelineConfig);
+  lvePipeline = std::make_unique<LvePipeline>(lveDevice);
+  lvePipeline->createGraphicsPipeline("./shaders/simple_shader.vert.spv",
+                                      "./shaders/simple_shader.frag.spv",
+                                      pipelineConfig);
 }
 
 void SimpleRenderSystem::renderGameObjects(FrameInfo& frameInfo) {

@@ -15,17 +15,13 @@
 
 namespace lve {
 
-LvePipeline::LvePipeline(LveDevice& device, const std::string& vertFilepath,
-                         const std::string& fragFilepath,
-                         const PipelineConfigInfo& configInfo)
-    : lveDevice{device} {
-  createGraphicsPipeline(vertFilepath, fragFilepath, configInfo);
-}
+LvePipeline::LvePipeline(LveDevice& device) : lveDevice{device} {}
 
 LvePipeline::~LvePipeline() {
   vkDestroyShaderModule(lveDevice.device(), vertShaderModule, nullptr);
   vkDestroyShaderModule(lveDevice.device(), fragShaderModule, nullptr);
-  vkDestroyPipeline(lveDevice.device(), graphicsPipeline, nullptr);
+  vkDestroyShaderModule(lveDevice.device(), compShaderModule, nullptr);
+  vkDestroyPipeline(lveDevice.device(), pipeline, nullptr);
 }
 
 std::vector<char> LvePipeline::readFile(const std::string& filepath) {
@@ -113,10 +109,42 @@ void LvePipeline::createGraphicsPipeline(const std::string& vertFilepath,
   pipelineInfo.basePipelineIndex = -1;
   pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
+  pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
   if (vkCreateGraphicsPipelines(lveDevice.device(), VK_NULL_HANDLE, 1,
                                 &pipelineInfo, nullptr,
-                                &graphicsPipeline) != VK_SUCCESS) {
+                                &pipeline) != VK_SUCCESS) {
     throw std::runtime_error("failed to create graphics pipeline.");
+  }
+}
+void LvePipeline::createComputePipeline(const std::string& compFilepath,
+                                        const PipelineConfigInfo& configInfo) {
+  assert(configInfo.pipelineLayout != VK_NULL_HANDLE &&
+         "cannot create compute pipeline:: no pipelineLayout provided in "
+         "configinfo.");
+
+  auto compCode = readFile(compFilepath);
+
+  createShaderModule(compCode, &compShaderModule);
+
+  VkPipelineShaderStageCreateInfo computeShaderStageInfo{};
+  computeShaderStageInfo.sType =
+      VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+  computeShaderStageInfo.stage = VK_SHADER_STAGE_COMPUTE_BIT;
+  computeShaderStageInfo.module = compShaderModule;
+  computeShaderStageInfo.pName = "main";
+
+  VkComputePipelineCreateInfo pipelineInfo{};
+  pipelineInfo.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
+  // NOTE: contains compute descriptor set layout
+  pipelineInfo.layout = configInfo.pipelineLayout;
+  pipelineInfo.stage = computeShaderStageInfo;
+
+  pipelineBindPoint = VK_PIPELINE_BIND_POINT_COMPUTE;
+
+  if (vkCreateComputePipelines(lveDevice.device(), VK_NULL_HANDLE, 1,
+                               &pipelineInfo, nullptr,
+                               &pipeline) != VK_SUCCESS) {
+    throw std::runtime_error("failed to create compute pipeline!");
   }
 }
 
@@ -134,8 +162,7 @@ void LvePipeline::createShaderModule(const std::vector<char>& code,
 }
 
 void LvePipeline::bind(VkCommandBuffer commandBuffers) {
-  vkCmdBindPipeline(commandBuffers, VK_PIPELINE_BIND_POINT_GRAPHICS,
-                    graphicsPipeline);
+  vkCmdBindPipeline(commandBuffers, pipelineBindPoint, pipeline);
 }
 
 void LvePipeline::defaultPipelineConfigInfo(PipelineConfigInfo& configInfo) {
