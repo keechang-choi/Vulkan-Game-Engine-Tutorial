@@ -1,11 +1,13 @@
 # Vulkan-Game-Engine-Tutorial
-Youtube lecture practice
-
+practice repo for `Vulkan game engine lecture` and `Vulkan tutorial`  
 all the base codes and materials from
-- lecture  
-  https://www.youtube.com/playlist?list=PL8327DO66nu9qYVKLDmdLW_84-yE4auCR
-- github repo  
-  https://github.com/blurrypiano/littleVulkanEngine
+- Vulkan Game Engine lecture   (Lec1~Lec27)  
+  https://www.youtube.com/playlist?list=PL8327DO66nu9qYVKLDmdLW_84-yE4auCR  
+  https://github.com/blurrypiano/littleVulkanEngine  
+- Vulkan Tutorial  (texture mapping ~ compute shader)  
+  https://vulkan-tutorial.com/  
+  https://github.com/Overv/VulkanTutorial  
+  
 
 ## Summary
 
