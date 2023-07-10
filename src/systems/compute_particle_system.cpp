@@ -87,15 +87,21 @@ void ComputeParticleSystem::createShaderStorageBuffers() {
 
   std::vector<Particle> particles(PARTICLE_COUNT);
   for (auto& particle : particles) {
-    float r = 0.25f * randomDist(randomEngine);
+    float r = 0.25f + 0.05f * randomDist(randomEngine);
     float theta = glm::two_pi<float>() * randomDist(randomEngine);
     float x = r * cos(theta);
     float y = r * sin(theta);
     particle.position = glm::vec2(x, y);
-    particle.velocity = glm::normalize(glm::vec2(x, y)) * 0.05f;
-    particle.color =
-        glm::vec4(randomDist(randomEngine), randomDist(randomEngine),
-                  randomDist(randomEngine), 1.f);
+    particle.velocity = glm::normalize(glm::vec2(x, y)) * 0.25f;
+    // particle.color =
+    //     glm::vec4(randomDist(randomEngine), randomDist(randomEngine),
+    //               randomDist(randomEngine), 1.f);
+    float rgb[3] = {
+        (1.f + glm::cos(theta)) / 2.0f,
+        (1.f + glm::cos(theta + 2.0f / 3.0f * glm::pi<float>())) / 2.0f,
+        (1.f + glm::cos(theta + 4.0f / 3.0f * glm::pi<float>())) / 2.0f};
+
+    particle.color = glm::vec4(rgb[0], rgb[1], rgb[2], 1.0f);
   }
 
   // transfer using staging buffer
@@ -220,10 +226,15 @@ void ComputeParticleSystem::createGraphicsPipeline(VkRenderPass renderPass) {
   // NOTE: src alpha blender factor
   lve::LvePipeline::enableAlphaBlending(pipelineConfig);
   // dst factor zero -> discard existing alpha
-  // ??TODO: fix circle overlay alpha problem
-  pipelineConfig.colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+  // TODO: fix circle overlay alpha problem
+
+  pipelineConfig.colorBlendAttachment.srcAlphaBlendFactor =
+      VK_BLEND_FACTOR_SRC_ALPHA;
   pipelineConfig.colorBlendAttachment.dstAlphaBlendFactor =
       VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+  // NOTE: depthTest makes occlusion?
+  pipelineConfig.depthStencilInfo.depthTestEnable = VK_FALSE;
+
   pipelineConfig.attributeDescriptions.clear();
   pipelineConfig.bindingDescriptions.clear();
 
@@ -233,6 +244,7 @@ void ComputeParticleSystem::createGraphicsPipeline(VkRenderPass renderPass) {
       lveDevice.getSampleCount();
   // particle binding, attribute
   pipelineConfig.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+
   pipelineConfig.bindingDescriptions = Particle::getBindingDescriptions();
   pipelineConfig.attributeDescriptions = Particle::getAttributeDescriptions();
 

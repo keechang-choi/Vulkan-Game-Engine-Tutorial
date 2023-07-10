@@ -29,7 +29,7 @@ void main(){
     particlesOut[index].velocity = particleIn.velocity;
 
     // window border flip 
-    // TODO: fix keeping flipping.
+    // NOTE: fix keeping flipping.
     vec2 absVelocity = vec2(abs(particlesOut[index].velocity.x), abs(particlesOut[index].velocity.y));
 
     if (particlesOut[index].position.x <= -1.0) {
