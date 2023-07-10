@@ -214,7 +214,8 @@ all the base codes and materials from
     - compute pipeline, compute shader, SSBO(shader storage buffer object)
   - recap:
     - descriptor sets, submitting commands buffers to queue and synchronization, depth test and alpha blending
-  - ![vulkan-tut-compute-particles-5](https://github.com/keechang-choi/Vulkan-Game-Engine-Tutorial/assets/49244613/ca59cd1d-7cf1-4df9-ab96-ff8dccd5f62a)
+  - ![vulkan-tut-compute-particles-2-opt](https://github.com/keechang-choi/Vulkan-Game-Engine-Tutorial/assets/49244613/dcc95ed2-39fa-4760-956d-feeb0e3ebb8b)
+
   - ![vulkan-tut-compute-particles-9](https://github.com/keechang-choi/Vulkan-Game-Engine-Tutorial/assets/49244613/33ac2418-9789-431b-9f8a-26353362f146)
 
 
